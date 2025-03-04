@@ -1,0 +1,100 @@
+\documentclass[12pt, letter paper]{article}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,geometry,fancyhdr,graphicx}
+
+\geometry{letterpaper, margin=1in}
+
+\usepackage[most]{tcolorbox}
+\definecolor{blockgray}{RGB}{240,240,240}
+
+\newtcolorbox{defblock}[1]{colback=blockgray, 
+colframe=black, fonttitle=\bfseries, 
+title=#1, title filled, 
+title style={colback=blockgray!100, 
+             colframe=blockgray}}
+
+\newtcolorbox{prop}[1]{colback=red!5!white,
+colframe=red!75!black,fonttitle=\bfseries,
+title={#1}}
+
+% For indicator functions:
+\DeclareMathAlphabet{\mathmybb}{U}{bbold}{m}{n}
+\newcommand{\1}{\mathmybb{1}}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Int}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Pcal}{\mathcal{P}}
+\newcommand{\Scal}{\mathcal{S}}
+\newcommand{\Borel}[1]{\mathcal{B}\paren{#1}}
+\newcommand{\0}{\emptyset}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Ep}[1]{\mathbb{E}\left[ #1 \right]}
+\newcommand{\paren}[1]{\left(#1 \right)}
+\newcommand{\sqbr}[1]{\left[#1 \right]}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\norm}[1]{\left|\hspace{0.05pt}\left|#1 \right|\hspace{0.05pt}\right|}
+\newcommand{\field}{\mathcal{F}}
+\newcommand{\ind}[1]{\mathmybb{1}_{#1}}
+\newcommand{\phiint}{\left[\varphi(a),\, \varphi(b)\right]}
+\newcommand{\mudi}{\,\mu\paren{di}}
+\newcommand{\nudj}{\,\nu\paren{dj}}
+\newcommand{\dmu}{\,d\mu}
+\newcommand{\dnu}{\,d\nu}
+\newcommand{\data}{\mathcal{D}_{n}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\aseq}{\stackrel{\mathrm{a.s.}}{=}}
+\newcommand{\X}{\boldsymbol{X}}
+\newcommand{\x}{\boldsymbol{x}}
+\renewcommand{\xi}{\x_{i}}
+\newcommand{\y}{\boldsymbol{y}}
+\newcommand{\e}{\boldsymbol{e}}
+\newcommand{\acvfx}[1]{\gamma_{X}\paren{#1}}
+\newcommand{\Cov}[1]{\mathrm{Cov}\paren{#1}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bbetahat}{\boldsymbol{\hat{\beta}}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\Loss}[1]{\mathcal{L}_{n}\paren{#1}}
+
+\title{Project: Cross-validation for model selection}
+\author{Diego Urdapilleta de la Parra}
+
+\begin{document}
+%\pagestyle{fancy}
+%\fancyhead[R]{ID:\@ 260948672}
+%\fancyhead[L]{2025/01/26
+%
+%MATH 545:\@ Assignment 1}
+%\setlength{\headheight}{28pt}
+\maketitle
+
+\section*{Background}
+\subsection*{Setup and preliminary definitions}
+
+Let \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) be a set of independent data points drawn from a distribution \(\prob_{y, \x}\) for \((y, \x)\in\R^{1+p}\). We treat the \(\x_{i}\) as predictors of the outcome \(y_{i}\), and we assume a linear model
+\[\y = \X\bbeta + \e\]
+where \(\X = {[\x_{1}\;\x_{2}\;\cdots\;\x_{n}]}^{\top}\in\R^{n\times p}\) is the design matrix, \(\y = \sqbr{y_{1}\; y_{2}\;\cdots\; y_{n}}^{\top}\), and \(\e\) is a mean-zero random vector with \(\Cov{\e} = \sigma_{2}\boldsymbol{I}_{n}\).
+
+In the context of competing models 
+
+Define
+\[\Loss{\alpha, \data} = \frac{1}{n}\sum_{i=1}^{n}\paren{\xi^{\top}\bbeta + e_{i} - \x_{i\alpha}^{\top}\bbetahat_{\alpha}}^{2}\]
+
+\begin{prop}{Lemma 1}
+    \[\Ep{\Loss{\alpha, \data}\Big|\,\X} = \sigma^{2} + \frac{1}{n}d_{\alpha}\sigma^{2} + \frac{1}{n}\norm{M_{\alpha}\X\bbeta}^{2}\]
+\end{prop}
+\begin{proof}
+    \[\Ep{\Loss(\alpha, \data), \y, \X} = \]
+\end{proof}
+
+
+
+
+
+
+ 
+
+
+
+
+\end{document}
