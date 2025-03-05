@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1741059628.90452 "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/notes.tex" "notes.pdf" "notes" 1741059630.91961 0
-  "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/notes.tex" 1741059627 3339 67c0d0fe0f756a53acb64c10c7066cd2 ""
+["pdflatex"] 1741143954.16486 "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/notes.tex" "notes.pdf" "notes" 1741143955.78208 0
+  "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/notes.tex" 1741143953 7995 d942ac269a1dc6d0e7f2e94097df0cd0 ""
   "c:/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1691265662 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm" 1691264004 1124 14ccf5552bc7f77ca02a8a402bea8bfb ""
   "c:/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy8.tfm" 1691264004 1120 200be8b775682cdf80acad4be5ef57e4 ""
@@ -38,6 +38,7 @@
   "c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb" 1691264004 32362 bc3f3eec7ab7d65fe700963d4017d32c ""
   "c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1691264004 32726 39f0f9e62e84beb801509898a605dbd5 ""
   "c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1691264004 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb" 1691264004 32587 65067f817f408bc71a7312f3d9828a9b ""
   "c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1691264004 32626 5abc8bb2f28aa647d4c70f8ea38cc0d3 ""
   "c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb" 1691264004 36118 fad905eba93cff5bce1e185fe980a177 ""
   "c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb" 1691264004 35479 2cca68718f15872e7cce1a8f6033b99b ""
@@ -174,8 +175,8 @@
   "c:/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1706153443 5035001 2e20c39fc2d43c8ca8366f96b17fbf3d ""
   "c:/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1706153568 8210995 e85920cccb09d5abda344a3900e73e04 ""
   "c:/texlive/2023/texmf.cnf" 1691269382 713 e69b156964470283e0530f5060668171 ""
-  "notes.aux" 1741059630 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "notes.tex" 1741059627 3339 67c0d0fe0f756a53acb64c10c7066cd2 ""
+  "notes.aux" 1741143955 360 b3e904d243ac36e3ad45527fffb5bcc9 "pdflatex"
+  "notes.tex" 1741143953 7995 d942ac269a1dc6d0e7f2e94097df0cd0 ""
   (generated)
   "notes.aux"
   "notes.log"
