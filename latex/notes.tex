@@ -1,0 +1,223 @@
+\documentclass[12pt, letter paper]{article}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,geometry,fancyhdr,graphicx,xcolor}
+\usepackage[most]{tcolorbox}
+
+
+\geometry{letterpaper, margin=1in}
+
+% For indicator functions:
+\DeclareMathAlphabet{\mathmybb}{U}{bbold}{m}{n}
+\newcommand{\1}{\mathmybb{1}}
+
+\newtcolorbox[auto counter, number within=section]{proposition}[2][Proposition]{%
+  colframe=blue!50!black,
+  colback=blue!10,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title=#1~\thetcbcounter \ifx#2\empty\else~(#2)\fi}
+
+\newtcolorbox[auto counter, number within=section]{definition}{%
+  fonttitle=\bfseries,
+  title=Definition~\thetcbcounter}
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Int}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Pcal}{\mathcal{P}}
+\newcommand{\Scal}{\mathcal{S}}
+\newcommand{\Borel}[1]{\mathcal{B}\paren{#1}}
+\newcommand{\0}{\emptyset}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Ep}[1]{\mathbb{E}\left[ #1 \right]}
+\newcommand{\paren}[1]{\left(#1 \right)}
+\newcommand{\sqbr}[1]{\left[#1 \right]}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\norm}[1]{\left|\hspace{-1pt}\left|#1 \right|\hspace{-1pt}\right|}
+\newcommand{\normsq}[1]{\norm{#1}^{2}}
+\newcommand{\field}{\mathcal{F}}
+\newcommand{\ind}[1]{\mathmybb{1}_{#1}}
+\newcommand{\mudi}{\,\mu\paren{di}}
+\newcommand{\nudj}{\,\nu\paren{dj}}
+\newcommand{\dmu}{\,d\mu}
+\newcommand{\dnu}{\,d\nu}
+\newcommand{\data}{\mathcal{D}_{n}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Acal}{\mathcal{A}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\aseq}{\stackrel{\mathrm{a.s.}}{=}}
+\newcommand{\X}{\boldsymbol{X}}
+\newcommand{\x}{\boldsymbol{x}}
+\newcommand{\y}{\boldsymbol{y}}
+\newcommand{\e}{\boldsymbol{e}}
+\newcommand{\acvfx}[1]{\gamma_{X}\paren{#1}}
+\newcommand{\Cov}[1]{\mathrm{Cov}\paren{#1}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bbetahat}{\boldsymbol{\hat{\beta}}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\Loss}[1]{L_{n}\paren{#1}}
+\newcommand{\Rhat}[2]{\hat{R}_{n}^{#1}\paren{#2}}
+\newcommand{\alphahat}[1]{\hat{\alpha}^{#1}}
+\newcommand{\lev}{h_{ii,\alpha}}
+\newcommand{\loocv}{\Rhat{(1)}{\alpha}}
+\newcommand{\op}[1]{o_{\prob}\paren{#1}}
+\newcommand{\Op}[1]{O_{\prob}\paren{#1}}
+
+\title{Project: Cross-validation for model selection
+
+(rough draft)}
+\author{Diego Urdapilleta de la Parra}
+\begin{document}
+\maketitle
+\section{Setup and preliminary results}
+Let \(n,p_{n}\) be positive integers and \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) be a set of independent data points drawn from a distribution \(\prob_{y, \x}\) for \((y, \x)\in\R^{1+p_{n}}\). We treat the \(\x_{i}\) as predictors of the outcome \(y_{i}\), and we assume a linear model
+\[\y = \X\bbeta + \e\]
+where \(\X = {[\x_{1}\;\x_{2}\;\cdots\;\x_{n}]}^{\top}\in\R^{n\times p_{n}}\) is the design matrix, \(\y = \sqbr{y_{1}\; y_{2}\;\cdots\; y_{n}}^{\top}\), and \(\e\) is a mean-zero random vector with \(\Cov{\e} = \sigma_{2}\boldsymbol{I}_{n}\).
+
+\begin{tcolorbox}[title=Assumptions, fonttitle=\bfseries]
+    We assume that the following are generally satisfied:
+    \begin{align*}
+        &\mathbf{H1:}\qquad \liminf_{n\to\infty} \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}>0 \text{ for all }\alpha \in\Acal\\
+        &\mathbf{H2:} \qquad \X^{\top}\X = O(n)\quad\text{and}\quad\paren{\X^{\top}\X}^{-1}= O\paren{n^{-1}}\\[2.5mm]
+        &\mathbf{H3:}\qquad \lim_{n\to\infty}\max_{i\leq n}\,h_{ii,\alpha} = 0 \text{ for all }\alpha \in\Acal\\
+    \end{align*}
+\end{tcolorbox}
+
+We consider the following setup for model selection. Let \(\Acal\subset2^{[p_{n}]}\) be a family of index sets representing candidate models. For \(\alpha\in\Acal\), we denote by \(p_{n}(\alpha)\) the cardinality of \(\alpha\) and consider the model
+\[m_{\alpha}(\X) = \X_{\alpha}\bbeta_{\alpha},\]
+where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns indexed by \(\alpha\), and \(\bbeta_{\alpha}\) is the coefficient vector containing only the entries indexed by \(\alpha\) in \(\bbeta\).
+\begin{enumerate}
+    \item We say \(\alpha\in\Acal\) is \emph{correct} if \(\Ep{\y\mid\X}\aseq m_{\alpha}(\X)\), and we denote by \(\Acal_{c}\) the set of correct models in \(\Acal\)
+    \item We say \(\alpha\in\Acal\) is \emph{wrong} if it is not correct, and we denote by \(\Acal_{w}\) the set of wrong models in \(\Acal\)
+    \item We say \(\Acal\) is \emph{embedded} if there exists an enumeration \(\alpha_{1}, \alpha_{2}, \ldots, \alpha_{k}\) of all elements in \(\Acal\) such that \[\alpha_{1}\subset\alpha_{2}\subset\cdots\subset\alpha_{k}.\]
+\end{enumerate}
+
+\begin{definition}
+    For \(\alpha\in\Acal\), let \(\bbetahat_{\alpha}\) be the OLS estimator of \(\bbeta_{\alpha}\) and \(\hat{m}_{\alpha}(\X):=\X_{\alpha}\bbetahat_{\alpha}\). We denote the average squared error of \(\hat{m}_{\alpha}\) by
+    \[\Loss{\alpha}:=\frac{1}{n}\normsq{\Ep{\y\mid\X} - \hat{m}_{\alpha}\paren{\X}}.\]
+    Additionally, we write
+    \(R_{n}(\alpha):= \Ep{\Loss{\alpha}\mid\X}\).
+\end{definition}
+
+\begin{proposition}{}
+    If we assume a linear model \(\y = \X\beta + \e\), then
+    \[\Loss{\alpha} = \frac{1}{n}\normsq{H_{\alpha}\e} + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\quad\text{and}\quad R_{n}(\alpha) = \frac{1}{n}\sigma^{2}p_{n}(\alpha) + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta},\]
+    where \(H_{\alpha} = \X_{\alpha}\paren{\X_{\alpha}^{\top}\X_{\alpha}}^{-1}\X_{\alpha}^{\top}\) and \(M_{\alpha}= I_{n} - H_{\alpha}\).
+\end{proposition}
+\begin{proof}
+    First, we have that
+    \begin{align*}
+        \normsq{\Ep{\y\mid\X} - \hat{m}_{\alpha}(\X)} &= \normsq{\X\bbeta - \X_{\alpha}\bbetahat_{\alpha}}\\
+        &= \normsq{\X\bbeta - H_{\alpha}\paren{\X\bbeta + \e}}\\
+        &= \normsq{M_{\alpha}\X\bbeta - H_{\alpha}\e}.
+    \end{align*}
+    Notice that \(M_{\alpha}\X\bbeta\) and \(H_{\alpha}\e\) are orthogonal:
+    \[\e^{\top}H_{\alpha}M_{\alpha}\X\bbeta  = \e^{\top}H_{\alpha}\paren{I_{n} - H_{\alpha}}\X\bbeta = \e^{\top}H_{\alpha}\X\bbeta - \e^{\top}H_{\alpha}\X\bbeta = 0.\]
+    Hence, the first part follows from the Pythagorean theorem.
+
+    For the second part, we note that \(\Ep{\normsq{H_{\alpha}\e}\mid\X} = \sigma^{2}p_{n}(\alpha)\) by the ``trace trick,'' where \(p_{n}(\alpha)\) denotes the size of model \(\alpha\).
+\end{proof}
+
+\begin{proposition}{}
+    Suppose that the set of correct candidate models \(\Acal_{c}\subset\Acal\) is non-empty, and let \(\alpha^{*}\) be the smallest correct model in \(\Acal_{c}\). Then, \(\alpha^{*}\) minimizes \(R_{n}(\alpha)\) over \(\alpha\in\Acal\).
+\end{proposition}
+\begin{proof}
+    Let \(\alpha\in\Acal\) be arbitrary and suppose that \(\alpha\in\Acal_{c}\). Then, \(\X_{\alpha}\bbeta_{\alpha} = \X\bbeta\) and \(p_{n}(\alpha^{*})\leq p_{n}(\alpha)\). Thus,
+    \begin{align*}
+        R_{n}(\alpha) &= \frac{1}{n}\sigma^{2}p_{n}(\alpha) + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\\
+        &= \frac{1}{n} \sigma^{2}p_{n}(\alpha) + \frac{1}{n}\underbrace{\normsq{M_{\alpha}\X_{\alpha}\bbeta_{\alpha}}}_{0}\\
+        &= \frac{1}{n}\sigma^{2}p_{n}(\alpha)\; \geq \; \frac{1}{n}\sigma^{2}p_{n}(\alpha^{*}) = R_{n}(\alpha^{*}).
+    \end{align*}
+    Now suppose that \(\alpha\in\Acal_{w}\). If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), the result follows by assumption H1. If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), then \ldots \textcolor{red}{MISSING.}
+\end{proof}
+
+\section{Leave-One-Out CV \cite{shao_linear_1993}}
+In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each \(\alpha\in\Acal\).
+\begin{definition}
+    The LOOCV estimator of \(R_{n}(\alpha)\) is 
+    \[\Rhat{(1)}{\alpha}:= \frac{1}{n}\sum_{i=1}^{n}\paren{\frac{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}{1-h_{ii,\alpha}}}^{2}\]
+\end{definition}
+
+\begin{proposition}[Lemma]{{Shao, 1993}}
+    \[\loocv = \begin{cases}
+        R_{n}(\alpha) + \sigma^{2} + \op{1} &\text{ if }\alpha\in\Acal_{w}\\[2mm]
+        \frac{1}{n}\normsq{M_{\alpha}\e} + \frac{2}{n}\sigma^{2}p(\alpha) + \op{n^{-1}} &\text{ if }\alpha\in\Acal_{c}
+    \end{cases}\]
+\end{proposition}
+
+\begin{proof}
+    Using the Taylor expansion of \(1/(1-x)^{2} = 1+2x + O(x^{2})\), we have
+    \[\frac{1}{\paren{1-\lev}^{2}} = 1 + 2\lev + \Op{\lev^{2}}.\]
+    Thus,
+    \begin{equation}
+        \label{eq:xizeta}
+        \loocv = \underbrace{\frac{1}{n}\sum_{i=1}^{n}\paren{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}^{2}}_{\xi_{\alpha,n}} + \underbrace{\frac{1}{n}\sum_{i=1}^{n}\paren{2\lev + \Op{\lev^{2}}}\paren{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}^{2}}_{\zeta_{\alpha,n}}
+    \end{equation}
+    Let \(\xi_{\alpha,n}\) and \(\zeta_{\alpha,n}\) denote the first and second terms in (\ref{eq:xizeta}), respectively. Note that
+    \begin{align}
+        \notag\xi_{\alpha,n} &= \frac{1}{n}\normsq{M_{\alpha}\X\bbeta + M_{\alpha}\e}\\
+        \label{line:decomp}&= \frac{1}{n}\paren{\normsq{M_{\alpha}\e} + \normsq{M_{\alpha}\X\bbeta} + 2 \e^{\top}M_{\alpha}\X\bbeta}\\
+        \notag&=\frac{1}{n}\normsq{\e} + \normsq{M_{\alpha}\X\bbeta} + \frac{1}{n}\normsq{H_{\alpha}\e} + \frac{2}{n}\e^{\top}M_{\alpha}\X\bbeta\\
+        \label{line:op1}&= \frac{1}{n}\normsq{\e} + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta} + \op{1}.
+    \end{align}
+    The equality at (\ref{line:op1}) follows from the fact that \(\Ep{\normsq{H_{\alpha}\e}\mid\X} = \sigma^{2}p(\alpha)\) and 
+    \[\Ep{\e^{\top}M_{\alpha}\X\bbeta\mid\X}^{2} = \sigma^{2}\normsq{M_{\alpha}\X\bbeta} = \Op{n},\qquad\textcolor{red}{(?)}\]
+    so that \(1/n\normsq{H_{\alpha}\e}\to_{\prob}0\) and \(2/n\paren{\e^{\top}M_{\alpha}\X\bbeta}=\Op{1}\).\quad\textcolor{red}{(?)} % This is the reasoning given in the paper; I don't understand why the sum is \op(1).
+
+    Since \(0<\lev<1\), \(2\lev + \Op{\lev^{2}}\leq\Op{\max_{i}\lev}\). Thus,
+    \begin{equation}
+        \label{eq:Opmax}
+        \zeta_{\alpha,n}\leq\Op{\max_{i}\lev}\paren{\frac{1}{n}\sum_{i=1}^{n}\paren{y_{i} - \x_{i\alpha}^{\top}\bbetahat_{\alpha}}}
+    \end{equation}
+    (\ref{line:op1}) and (\ref{eq:Opmax}) imply the first case in the Lemma.
+
+    If \(\alpha\in\Acal^{c}\), it is easy to see from (\ref{line:decomp}) that \(\xi_{\alpha,n} = 1/n\normsq{M_{\alpha}\e}\), Furthermore,
+    \[\zeta_{\alpha,n} = \frac{2}{n}\sigma^{2}p(\alpha) + \op{1},\qquad\textcolor{red}{(?)}\]
+    proving the second case.
+\end{proof}
+
+\begin{proposition}{{Shao, 1993}}
+    Let \(\alphahat{(1)}\) be the model minimizing \(\Rhat{(1)}{\alpha}\).
+    \begin{enumerate}
+        \item Under H1, H2, and H3, \[\lim_{n\to\infty}\prob\paren{\alphahat{(1)}\in\Acal_{w}}=0.\]
+        \item For \(\alpha\in\Acal_{c}\) with \(\alpha\neq\alpha^{*}\),\[\prob\paren{\Rhat{(1)}{\alpha}\leq \Rhat{(1)}{\alpha^{*}}} = \prob\paren{2\paren{p(\alpha) - p(\alpha^{*})}\sigma^{2} < \e^{\top}(H_{\alpha} - H_{\alpha^{*}})\e} + \op{1}.\] In particular, if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_n)\), \[\prob\paren{\Rhat{(1)}{\alpha}\leq \Rhat{(1)}{\alpha^{*}}} = \prob\paren{2k < \chi^{2}(k)} + \op{1} \] for \(k=p(\alpha) - p(\alpha^{*})\).
+        \item If \(p(\alpha^*) \neq p\), \[\lim_{n\to\infty}\prob\paren{\alphahat{(1)}=\alpha^{*}}\neq 1.\]
+    \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+    \(\)\linebreak
+    1.\quad \textcolor{red}{MISSING}
+
+    \noindent2.\quad The first part follows from Lemma 2.1 by algebraic manipulation. The second part follows by noting that, if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_{n})\), then \[\frac{\e^{\top}}{\sigma}\paren{H_{\alpha} - H_{\alpha^{*}}}\frac{\e}{\sigma}\sim\chi^{2}\paren{\mathrm{tr}\paren{H_{\alpha}-H_{\alpha^{*}}}}.\]
+
+    \noindent3.\quad If \(p(\alpha^{*}) = p\), then \(\Acal_{c} = \set{\alpha^{*}}\). It follows from 1.\ that \(\lim_{n\to\infty}\prob\paren{\alphahat{(1)}=\alpha^{*} }= 1\).
+    Conversely, if \(\lim_{n\to\infty}\prob\paren{\alphahat{(1)}=\alpha^{*}} = 1\) \textcolor{red}{MISSING}
+\end{proof}
+
+\begin{proposition}[Corollary]{}
+    LOOCV is not consistent. In particular, overfits with non-vanishing probability.
+\end{proposition}
+
+\section{Shao, 1997 \cite{shao_asymptotic_1997}}
+\begin{definition}
+    Let \(\alphahat{}_{n}\) be the model selected by minimizing some criterion \(\hat{R}_{n}\) over \(\Acal\), and let \(\alpha^{*}_{n}\) denote the model minimizing \(R_{n}\) over \(\Acal\). We say \(\hat{R}_{n}\) is \emph{consistent} if 
+    \[\prob\set{\alphahat{} = \alpha^{*}}\to 1\]
+    as \(n\to\infty\). We say that \(\hat{R}_{n}\) is \emph{assomptotically loss efficient} if 
+    \[\frac{R_{n}(\alphahat{})}{R_{n}(\alpha^{*}_{n})}\to 1\quad\text{a.s.}\]
+\end{definition}
+
+\begin{proposition}{{Shao, 1997}}
+    Suppose H1, \(p_{n}/n\to 0\), and that \(\Acal_{c}\) is non-empty for all but finitely many \(n\).
+    \begin{enumerate}
+        \item If \(|\Acal_{c}|=1\) for all but finitely many \(n\), then consistency is equivalent to efficiency in the sense of Definition 3.1
+        \item If \(p_{n}(\alpha^{*}_{n})\not\to_{\prob}\infty\), then consistency is equivalent to efficiency in the sense of Definition 3.1
+    \end{enumerate}
+\end{proposition}
+
+
+\bibliographystyle{ieeetr}  
+\bibliography{references}
+
+
+\end{document}
