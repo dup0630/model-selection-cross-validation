@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex notes"] 1741234693.03122 "notes.aux" "notes.bbl" "notes" 1741234697.45218 0
+["bibtex notes"] 1741234898.02106 "notes.aux" "notes.bbl" "notes" 1741234902.20469 0
   "./references.bib" 1741233276 741 bf7cfdd5e2e28a104b0905d4841e6f6c ""
   "c:/texlive/2023/texmf-dist/bibtex/bst/base/ieeetr.bst" 1691264474 18361 1a00e58565e7f19bf2b3e1bfb82254ae ""
-  "notes.aux" 1741234695 710 212b15bcd54c42e628d51a2345d594bf "pdflatex"
+  "notes.aux" 1741234900 710 8f0155d2af7f469d71dfb11b69b1964a "pdflatex"
   (generated)
   "notes.bbl"
   "notes.blg"
   (rewritten before read)
-["pdflatex"] 1741234693.78287 "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/latex/notes.tex" "notes.pdf" "notes" 1741234697.45299 0
-  "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/latex/notes.tex" 1741234683 13242 1a65e932c40ffceddb3420d9b04d3e56 ""
+["pdflatex"] 1741234898.73809 "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/latex/notes.tex" "notes.pdf" "notes" 1741234902.20566 0
+  "c:/Users/diego/OneDrive/Documentos/McGill/MATH/MATH410/MATH410/latex/notes.tex" 1741234893 13244 2d55f08868780064723c8c747a48c030 ""
   "c:/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1691265662 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy6.tfm" 1691264004 1124 14ccf5552bc7f77ca02a8a402bea8bfb ""
   "c:/texlive/2023/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy8.tfm" 1691264004 1120 200be8b775682cdf80acad4be5ef57e4 ""
@@ -184,9 +184,9 @@
   "c:/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1706153443 5035001 2e20c39fc2d43c8ca8366f96b17fbf3d ""
   "c:/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1706153568 8210995 e85920cccb09d5abda344a3900e73e04 ""
   "c:/texlive/2023/texmf.cnf" 1691269382 713 e69b156964470283e0530f5060668171 ""
-  "notes.aux" 1741234695 710 212b15bcd54c42e628d51a2345d594bf "pdflatex"
-  "notes.bbl" 1741234693 392 8874107ff3359e413ad36b96e75b7c80 "bibtex notes"
-  "notes.tex" 1741234683 13242 1a65e932c40ffceddb3420d9b04d3e56 ""
+  "notes.aux" 1741234900 710 8f0155d2af7f469d71dfb11b69b1964a "pdflatex"
+  "notes.bbl" 1741234898 392 8874107ff3359e413ad36b96e75b7c80 "bibtex notes"
+  "notes.tex" 1741234893 13244 2d55f08868780064723c8c747a48c030 ""
   (generated)
   "notes.aux"
   "notes.log"

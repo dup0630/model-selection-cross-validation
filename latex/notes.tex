@@ -14,7 +14,7 @@
   colback=blue!10,
   coltitle=white,
   fonttitle=\bfseries,
-  title=#1~\thetcbcounter \ifx#2\empty\else~(#2)\fi}
+  title=#1~\thetcbcounter\ifx#2\empty\else~(#2)\fi}
 
 \newtcolorbox[auto counter, number within=section]{definition}{%
   fonttitle=\bfseries,
@@ -115,7 +115,7 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
     \[\e^{\top}H_{\alpha}M_{\alpha}\X\bbeta  = \e^{\top}H_{\alpha}\paren{I_{n} - H_{\alpha}}\X\bbeta = \e^{\top}H_{\alpha}\X\bbeta - \e^{\top}H_{\alpha}\X\bbeta = 0.\]
     Hence, the first part follows from the Pythagorean theorem.
 
-    For the second part, we note that \(\Ep{\normsq{H_{\alpha}\e}\mid\X} = \sigma^{2}p_{n}(\alpha)\) by the ``trace trick,'' where \(p_{n}(\alpha)\) denotes the size of model \(\alpha\).
+    For the second part, we note that \(\Ep{\normsq{H_{\alpha}\e}\mid\X} = \sigma^{2}p_{n}(\alpha)\) by the ``trace trick'', where \(p_{n}(\alpha)\) denotes the size of model \(\alpha\).
 \end{proof}
 
 \begin{proposition}{}
@@ -131,7 +131,7 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
     Now suppose that \(\alpha\in\Acal_{w}\). If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), the result follows by assumption H1. If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), then \ldots \textcolor{red}{MISSING.}
 \end{proof}
 
-\section{Leave-One-Out CV \cite{shao_linear_1993}}
+\section{Leave-One-Out CV~\cite{shao_linear_1993}}
 In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each \(\alpha\in\Acal\).
 \begin{definition}
     The LOOCV estimator of \(R_{n}(\alpha)\) is 
@@ -146,7 +146,7 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
 \end{proposition}
 
 \begin{proof}
-    Using the Taylor expansion of \(1/(1-x)^{2} = 1+2x + O(x^{2})\), we have
+    Using the Taylor expansion of \(1/{(1-x)}^{2} = 1+2x + O(x^{2})\), we have
     \[\frac{1}{\paren{1-\lev}^{2}} = 1 + 2\lev + \Op{\lev^{2}}.\]
     Thus,
     \begin{equation}
@@ -186,8 +186,9 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
 \end{proposition}
 
 \begin{proof}
-    \(\)\linebreak
-    1.\quad \textcolor{red}{MISSING}
+    \(\)
+
+    \noindent1.\quad \textcolor{red}{MISSING}
 
     \noindent2.\quad The first part follows from Lemma 2.1 by algebraic manipulation. The second part follows by noting that, if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_{n})\), then \[\frac{\e^{\top}}{\sigma}\paren{H_{\alpha} - H_{\alpha^{*}}}\frac{\e}{\sigma}\sim\chi^{2}\paren{\mathrm{tr}\paren{H_{\alpha}-H_{\alpha^{*}}}}.\]
 
@@ -199,7 +200,7 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     LOOCV is not consistent. In particular, overfits with non-vanishing probability.
 \end{proposition}
 
-\section{Shao, 1997 \cite{shao_asymptotic_1997}}
+\section{Shao, 1997~\cite{shao_asymptotic_1997}}
 \begin{definition}
     Let \(\alphahat{}_{n}\) be the model selected by minimizing some criterion \(\hat{R}_{n}\) over \(\Acal\), and let \(\alpha^{*}_{n}\) denote the model minimizing \(R_{n}\) over \(\Acal\). We say \(\hat{R}_{n}\) is \emph{consistent} if 
     \[\prob\set{\alphahat{} = \alpha^{*}}\to 1\]
