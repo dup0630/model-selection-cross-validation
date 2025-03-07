@@ -18,7 +18,8 @@
 
 \newtcolorbox[auto counter, number within=section]{definition}{%
   fonttitle=\bfseries,
-  title=Definition~\thetcbcounter}
+  title=Definition~\thetcbcounter,
+  label={def:\thetcbcounter}}
 
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Int}{\mathbb{Z}}
@@ -56,12 +57,13 @@
 \newcommand{\bbetahat}{\boldsymbol{\hat{\beta}}}
 \newcommand{\bepsilon}{\boldsymbol{\epsilon}}
 \newcommand{\Loss}[1]{L_{n}\paren{#1}}
-\newcommand{\Rhat}[2]{\hat{R}_{n}^{#1}\paren{#2}}
+\newcommand{\Rhat}[2]{\hat{R}_{n, #1}\paren{#2}}
 \newcommand{\alphahat}[1]{\hat{\alpha}^{#1}}
 \newcommand{\lev}{h_{ii,\alpha}}
-\newcommand{\loocv}{\Rhat{(1)}{\alpha}}
+\newcommand{\loocv}[1]{\hat{R}^{(1)}_{n}\paren{#1}}
 \newcommand{\op}[1]{o_{\prob}\paren{#1}}
 \newcommand{\Op}[1]{O_{\prob}\paren{#1}}
+\newcommand{\sigmahat}{\hat{\sigma}^{2}_{n}}
 
 \title{Project: Cross-validation for model selection
 
@@ -73,15 +75,6 @@
 Let \(n,p_{n}\) be positive integers and \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) be a set of independent data points drawn from a distribution \(\prob_{y, \x}\) for \((y, \x)\in\R^{1+p_{n}}\). We treat the \(\x_{i}\) as predictors of the outcome \(y_{i}\), and we assume a linear model
 \[\y = \X\bbeta + \e\]
 where \(\X = {[\x_{1}\;\x_{2}\;\cdots\;\x_{n}]}^{\top}\in\R^{n\times p_{n}}\) is the design matrix, \(\y = \sqbr{y_{1}\; y_{2}\;\cdots\; y_{n}}^{\top}\), and \(\e\) is a mean-zero random vector with \(\Cov{\e} = \sigma_{2}\boldsymbol{I}_{n}\).
-
-\begin{tcolorbox}[title=Assumptions, fonttitle=\bfseries]
-    We assume that the following are generally satisfied:
-    \begin{align*}
-        &\mathbf{H1:}\qquad \liminf_{n\to\infty} \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}>0 \text{ for all }\alpha \in\Acal\\
-        &\mathbf{H2:} \qquad \X^{\top}\X = O(n)\quad\text{and}\quad\paren{\X^{\top}\X}^{-1}= O\paren{n^{-1}}\\[2.5mm]
-        &\mathbf{H3:}\qquad \lim_{n\to\infty}\max_{i\leq n}\,h_{ii,\alpha} = 0 \text{ for all }\alpha \in\Acal\\
-    \end{align*}
-\end{tcolorbox}
 
 We consider the following setup for model selection. Let \(\Acal\subset2^{[p_{n}]}\) be a family of index sets representing candidate models. For \(\alpha\in\Acal\), we denote by \(p_{n}(\alpha)\) the cardinality of \(\alpha\) and consider the model
 \[m_{\alpha}(\X) = \X_{\alpha}\bbeta_{\alpha},\]
@@ -98,6 +91,16 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
     Additionally, we write
     \(R_{n}(\alpha):= \Ep{\Loss{\alpha}\mid\X}\).
 \end{definition}
+
+\begin{tcolorbox}[title=Assumptions, fonttitle=\bfseries]
+    The following conditions will be used throughout the paper:
+    \begin{align*}
+        &\mathbf{H1:}\qquad \liminf_{n\to\infty} \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}>0 \text{ for all }\alpha \in\Acal\\
+        &\mathbf{H2:} \qquad \X^{\top}\X = O(n)\quad\text{and}\quad\paren{\X^{\top}\X}^{-1}= O\paren{n^{-1}}\\[2.5mm]
+        &\mathbf{H3:}\qquad \lim_{n\to\infty}\max_{i\leq n}\,h_{ii,\alpha} = 0 \text{ for all }\alpha \in\Acal\\
+        &\mathbf{H4:}\qquad \sum_{\alpha\in\Acal_{w}}\frac{1}{\paren{nR_{n}(\alpha)}^{m}}\to_{\prob}0\quad\text{for some }m\geq 1
+    \end{align*}
+\end{tcolorbox}
 
 \begin{proposition}{}
     If we assume a linear model \(\y = \X\beta + \e\), then
@@ -124,7 +127,7 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
 \begin{proof}
     Let \(\alpha\in\Acal\) be arbitrary and suppose that \(\alpha\in\Acal_{c}\). Then, \(\X_{\alpha}\bbeta_{\alpha} = \X\bbeta\) and \(p_{n}(\alpha^{*})\leq p_{n}(\alpha)\). Thus,
     \begin{align*}
-        R_{n}(\alpha) &= \frac{1}{n}\sigma^{2}p_{n}(\alpha) + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\\
+        R_{n}(\alpha) &= \frac{1}{n}\sigma^{2}p_{n}(\alpha) + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\\[2mm]
         &= \frac{1}{n} \sigma^{2}p_{n}(\alpha) + \frac{1}{n}\underbrace{\normsq{M_{\alpha}\X_{\alpha}\bbeta_{\alpha}}}_{0}\\
         &= \frac{1}{n}\sigma^{2}p_{n}(\alpha)\; \geq \; \frac{1}{n}\sigma^{2}p_{n}(\alpha^{*}) = R_{n}(\alpha^{*}).
     \end{align*}
@@ -135,7 +138,7 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
 In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each \(\alpha\in\Acal\).
 \begin{definition}
     The LOOCV estimator of \(R_{n}(\alpha)\) is 
-    \[\Rhat{(1)}{\alpha}:= \frac{1}{n}\sum_{i=1}^{n}\paren{\frac{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}{1-h_{ii,\alpha}}}^{2}\]
+    \[\loocv{\alpha}:= \frac{1}{n}\sum_{i=1}^{n}\paren{\frac{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}{1-h_{ii,\alpha}}}^{2}\]
 \end{definition}
 
 \begin{proposition}[Lemma]{{Shao, 1993}}
@@ -157,7 +160,7 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     \begin{align}
         \notag\xi_{\alpha,n} &= \frac{1}{n}\normsq{M_{\alpha}\X\bbeta + M_{\alpha}\e}\\
         \label{line:decomp}&= \frac{1}{n}\paren{\normsq{M_{\alpha}\e} + \normsq{M_{\alpha}\X\bbeta} + 2 \e^{\top}M_{\alpha}\X\bbeta}\\
-        \notag&=\frac{1}{n}\normsq{\e} + \normsq{M_{\alpha}\X\bbeta} + \frac{1}{n}\normsq{H_{\alpha}\e} + \frac{2}{n}\e^{\top}M_{\alpha}\X\bbeta\\
+        \notag&=\frac{1}{n}\normsq{\e} + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta} + \frac{1}{n}\normsq{H_{\alpha}\e} + \frac{2}{n}\e^{\top}M_{\alpha}\X\bbeta\\
         \label{line:op1}&= \frac{1}{n}\normsq{\e} + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta} + \op{1}.
     \end{align}
     The equality at (\ref{line:op1}) follows from the fact that \(\Ep{\normsq{H_{\alpha}\e}\mid\X} = \sigma^{2}p(\alpha)\) and 
@@ -167,9 +170,9 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     Since \(0<\lev<1\), \(2\lev + \Op{\lev^{2}}\leq\Op{\max_{i}\lev}\). Thus,
     \begin{equation}
         \label{eq:Opmax}
-        \zeta_{\alpha,n}\leq\Op{\max_{i}\lev}\paren{\frac{1}{n}\sum_{i=1}^{n}\paren{y_{i} - \x_{i\alpha}^{\top}\bbetahat_{\alpha}}}
+        \zeta_{\alpha,n}\leq\Op{\max_{i}\lev}\paren{\frac{1}{n}\sum_{i=1}^{n}\paren{y_{i} - \x_{i\alpha}^{\top}\bbetahat_{\alpha}}^{2}} = \Op{\max_{i}\lev}\xi_{\alpha,n}.
     \end{equation}
-    (\ref{line:op1}) and (\ref{eq:Opmax}) imply the first case in the Lemma.
+    (\ref{line:op1}) and (\ref{eq:Opmax}) imply the first case in the Lemma.\textcolor{red}{ DOES IT?}
 
     If \(\alpha\in\Acal^{c}\), it is easy to see from (\ref{line:decomp}) that \(\xi_{\alpha,n} = 1/n\normsq{M_{\alpha}\e}\), Furthermore,
     \[\zeta_{\alpha,n} = \frac{2}{n}\sigma^{2}p(\alpha) + \op{1},\qquad\textcolor{red}{(?)}\]
@@ -177,10 +180,10 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
 \end{proof}
 
 \begin{proposition}{{Shao, 1993}}
-    Let \(\alphahat{(1)}\) be the model minimizing \(\Rhat{(1)}{\alpha}\).
+    Let \(\alphahat{(1)}\) be the model minimizing \(\loocv{\alpha}\).
     \begin{enumerate}
         \item Under H1, H2, and H3, \[\lim_{n\to\infty}\prob\paren{\alphahat{(1)}\in\Acal_{w}}=0.\]
-        \item For \(\alpha\in\Acal_{c}\) with \(\alpha\neq\alpha^{*}\),\[\prob\paren{\Rhat{(1)}{\alpha}\leq \Rhat{(1)}{\alpha^{*}}} = \prob\paren{2\paren{p(\alpha) - p(\alpha^{*})}\sigma^{2} < \e^{\top}(H_{\alpha} - H_{\alpha^{*}})\e} + \op{1}.\] In particular, if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_n)\), \[\prob\paren{\Rhat{(1)}{\alpha}\leq \Rhat{(1)}{\alpha^{*}}} = \prob\paren{2k < \chi^{2}(k)} + \op{1} \] for \(k=p(\alpha) - p(\alpha^{*})\).
+        \item For \(\alpha\in\Acal_{c}\) with \(\alpha\neq\alpha^{*}\),\[\prob\paren{\loocv{\alpha}\leq \loocv{\alpha^{*}}} = \prob\paren{2\paren{p(\alpha) - p(\alpha^{*})}\sigma^{2} < \e^{\top}(H_{\alpha} - H_{\alpha^{*}})\e} + \op{1}.\] In particular, if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_n)\), \[\prob\paren{\loocv{\alpha}\leq \loocv{\alpha^{*}}} = \prob\paren{2k < \chi^{2}(k)} + \op{1} \] for \(k=p(\alpha) - p(\alpha^{*})\).
         \item If \(p(\alpha^*) \neq p\), \[\lim_{n\to\infty}\prob\paren{\alphahat{(1)}=\alpha^{*}}\neq 1.\]
     \end{enumerate}
 \end{proposition}
@@ -200,6 +203,8 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     LOOCV is not consistent. In particular, overfits with non-vanishing probability.
 \end{proposition}
 
+A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1\) as \(n\to\infty\), where \(n_{v}\) is the number of validation samples.
+
 \section{Shao, 1997~\cite{shao_asymptotic_1997}}
 \begin{definition}
     Let \(\alphahat{}_{n}\) be the model selected by minimizing some criterion \(\hat{R}_{n}\) over \(\Acal\), and let \(\alpha^{*}_{n}\) denote the model minimizing \(R_{n}\) over \(\Acal\). We say \(\hat{R}_{n}\) is \emph{consistent} if 
@@ -208,17 +213,70 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     \[\frac{R_{n}(\alphahat{})}{R_{n}(\alpha^{*}_{n})}\to 1\quad\text{a.s.}\]
 \end{definition}
 
-\begin{proposition}{{Shao, 1997}}
+\begin{proposition}[Proposition]{{Shao, 1997}}
     Suppose H1, \(p_{n}/n\to 0\), and that \(\Acal_{c}\) is non-empty for all but finitely many \(n\).
     \begin{enumerate}
         \item If \(|\Acal_{c}|=1\) for all but finitely many \(n\), then consistency is equivalent to efficiency in the sense of Definition 3.1
         \item If \(p_{n}(\alpha^{*}_{n})\not\to_{\prob}\infty\), then consistency is equivalent to efficiency in the sense of Definition 3.1
     \end{enumerate}
 \end{proposition}
+\begin{proof}
+    \textcolor{red}{MISSING}
+\end{proof}
+
+\begin{definition}
+    We define the GIC loss estimator to be
+    \[\Rhat{\lambda_{n}}{\alpha} := \frac{\normsq{\y - \hat{m}(\X)}}{n} + \frac{1}{n}\lambda_{n}\sigmahat p_{n}(\alpha)\quad\text{for }\alpha\in\Acal,\]
+    where \(\sigmahat\) is an estimator of \(\sigma^{2}\) and \(\lambda_{n}\) is a sequence of positive real numbers satisfying \(\lambda_{n}\geq 2\) and \(\lambda_{n}/n\to 0\).
+\end{definition}
+
+\subsection{The case of \(\lambda_{n} \equiv 2\)}
+
+\begin{proposition}{{Shao, 1997}}
+    Suppose that \(\lambda_{n}=2\) for all \(n\geq 1\) and that \(\sigmahat\) is a consistent estimator of \(\sigma^{2}\). Then,
+    \[\Rhat{2}{\alpha} = \begin{cases}
+        \textcolor{red}{TBD}
+    \end{cases}\]
+\end{proposition}
+
+\begin{proposition}[Theorem]{{Shao, 1997}}
+    Suppose that H4 holds and that \(\sigmahat\) is consistent for \(\sigma^{2}\). Then, \(\alphahat{2}_{n}\) is consistent and asymptotically loss efficient.
+    \begin{enumerate}
+        \item If \(|\Acal_{c}|\leq1\) for all but finitely many \(n\), then \(\alphahat{2}_{n}\) asymptotically loss efficient.
+        \item Suppose that \(|\Acal_{c}|> 1\) for all but finitely many \(n\). If there exists a positive integer \(m\) such that \(\Ep{y_{1} - \x_{1}^{\top}\bbeta}^{4m}<\infty\) and 
+        \begin{equation}
+            \sum_{\alpha\in\Acal_{c}}\frac{1}{\paren{p_{n}(\alpha)}^{m}}\to 0 \quad\text{or}\quad \sum_{\substack{\alpha\in\Acal_{c},\\ \alpha\neq\alpha^{*}}}\frac{1}{\paren{p_{n}(\alpha) - p_{n}(\alpha^{*})}^{m}},
+        \end{equation}
+        then \(\alphahat{2}_{n}\) is assymptotically loss efficient.
+        \item Suppose that \(|\Acal_{c}>1|\) for all but finitely many \(n\) and that for any integer \(q\) and constant \(c>2\), 
+        \begin{equation}
+            \label{eq:conditionQ}
+            \liminf_{n\to\infty}\inf_{Q_{n}\in\mathcal{Q}_{n,q}}\prob\set{\e_{n}^{\top}Q_{n}\e_{n} > c\sigma^{2}q} > 0,
+        \end{equation}
+        where \(\mathcal{Q}_{n,q}\) is the set of all projection matrices of rank \(q\). The condition that
+        \begin{equation}
+            \label{eq:conditionP}
+            p_{n}(\alpha^{*}_{n})\to\infty\quad\text{or}\quad \min_{\substack{\alpha\in\Acal_{c},\\ \alpha\neq\alpha^{*}}}\paren{p_{n}(\alpha) - p_{n}(\alpha^{*})}\to\infty
+        \end{equation}
+        is necessary and sufficient for the asymptotic loss efficiency of \(\alphahat{2}_{n}\) whenever \(|\Acal_{c}|\) is bounded or \(\Acal\) is embedded.
+    \end{enumerate}
+\end{proposition}
+
+\begin{proof}
+    \textcolor{red}{MISSING}
+\end{proof}
+
+Note that condition (\ref{eq:conditionQ}) is satisfied if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_{n})\). Condition (\ref{eq:conditionP}) is satisfied if \(\Acal\) does not contain two correct models with fixed dimensions for all but finitely many \(n\).
+\begin{proposition}[Corollary]{{Shao, 1997}}
+    If \(\Acal_{c}\) contains exactly one model with fixed dimension for all but finitely many \(n\), then \(\alphahat{2}_{n}\) is consistent.
+\end{proposition}
+\begin{proof}
+    This follows immediately from Theorem~\ref{prop:97thm1} and Proposition~\ref{prop:97prop1}.
+\end{proof}
 
 
+\pagebreak
 \bibliographystyle{ieeetr}  
 \bibliography{references}
-
 
 \end{document}
