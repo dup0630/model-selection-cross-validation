@@ -12,7 +12,13 @@
 - Yang
     - 
 - Bunea et al
-    - 
+    - Rate of convergence under Bic-type penalty satisfies linear, convex, single selection and subset selection bounds.
+    - Relies on result by Birgé et al 2001 (prepublication). 
+- Tsybakov
+    - Holder classes
+    - Sobolev classes
+    - Projection estimator
+    - Oracles
 
 
 
