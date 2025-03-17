@@ -177,7 +177,7 @@ results
 
 # Experiment 2 -----------------------------------------------------------------
 
-n_set <- 20 * 10^(1:10)
+n_set <- 20 * 10^(1:5)
 p <- 10
 sigma.sq <- 1
 true_model <- 1:5 # Including intercept
