@@ -10,9 +10,8 @@
     - Two Categories: LOO (similar to GIC-2) and delete-d (similar to GIC-$$\lambda_{n}$$)
     - Thm 1: Assymptotic efficiency of category 1
     - Thm 2: Assimptotic efficiency of category 2
-
 - Yang
-    - 
+    - Nonparametric vs parametric
 - Bunea et al
     - Rate of convergence under Bic-type penalty satisfies linear, convex, single selection and subset selection bounds.
     - Relies on result by Birgé et al 2001 (prepublication). 
