@@ -177,15 +177,15 @@ results
 
 # Experiment 2 -----------------------------------------------------------------
 
-n_set <- 20 * 10^(1:5)
+n_set <- 100 * 2^(1:5)
 p <- 10
 sigma.sq <- 1
 true_model <- 1:5 # Including intercept
-r <- 10000
+r <- 5000
 
-loo_results <- rep(0, 10) 
-kfold_results <- rep(0, 10) 
-ho_results <- rep(0, 10) 
+loo_results <- rep(0, 10)
+kfold_results <- rep(0, 10)
+ho_results <- rep(0, 10)
 
 for (n in n_set) {
   loo_results[n] <- loo.MC(r, n, p, sigma.sq, true_model)
