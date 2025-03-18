@@ -15,21 +15,21 @@ hold.out.select <- function(X_est, y_est, X_eval, y_eval, model1, model2){
 
 
 # CV with voting
-CV.v.selection <- function(X, y, model1, model2, n_est){
+CV.v.selection <- function(X, y, model1, model2, n_eval){
   n <- length(y)
-  subsets <- combn(n, n_est)
-  size <- choose(n, n_est)
+  subsets <- combn(n, n_eval)
+  size <- choose(n, n_eval)
   votes <- c()
   for (i in 1:size) {
     # Split
-    est_indices <- set[, i]
-    eval_indices <- setdiff(1:n, set[, i])
+    eval_indices <- subsets[, i]
+    est_indices <- setdiff(1:n, subsets[, i])
     X_est <- X[est_indices, ]
     y_est <- y[est_indices]
     X_eval <- X[eval_indices, ]
     y_eval <- y[eval_indices]
     # Compute and vote
-    tao <- hold.out.selection(X_est, y_est, X_eval, y_eval, model1, model2)
+    tao <- hold.out.select(X_est, y_est, X_eval, y_eval, model1, model2)
     votes <- c(votes, tao)
   }
   
@@ -72,11 +72,28 @@ CV.a.selection <- function(X, y, model1, model2, n_eval){
 
 # Models for testing -----------------------------------------------------------
 
-KernelRegression <- function(X, y, K, h){
-  den <- function(x, h){ TBD }
-  reg <- function(x, h){ TBD }
-  model <- list(f_hat = f_hat, density = den, kernel = K, h = h, X = X, y = y)
+KernelRegression <- function(X, y, kernel, h=0.1) {
+  if (missing(kernel)) {
+    kernel <- function(x) output <- prod(dnorm(x, 0, 1)) # Gaussian kernel by default
+  }
+  
+  density <- function(x_0, model) {
+    terms <- apply(model$X, 1, function(row) kernel((x_0 - row) / model$h))
+    return(mean(terms))
+  }
+  
+  f_hat <- function(x_0, model) {
+    weights <- apply(model$X, 1, function(row) kernel((x_0 - row) / model$h))
+    numerator <- sum(weights * model$y)
+    denominator <- sum(weights)
+    
+    if (denominator == 0) return(NA)
+    return(numerator / denominator)
+  }
+  
+  model <- list(f_hat = f_hat, density = density, kernel = kernel, h = h, X = X, y = y)
   class(model) <- "KernelRegression"
+  return(model)
 }
 
 LinearRegression <- function(X, y) {
@@ -86,26 +103,19 @@ LinearRegression <- function(X, y) {
   return(model)
 }
 
+# Predict methods
 predict.KernelRegression <- function(object, x_new, ...) {
-  if (ncol(X_new) != nrow(object$coefficients)) {
-    stop("Mismatch in number of predictors")
-  }
-  predictions <- TBD
-  return(predictions)
+  pred <- sapply(x_new, function(x) object$f_hat(x, object))
+  return(pred)
 }
-
-predict.LinearRegression <- function(object, X_new, ...) {
-  if (ncol(X_new) != nrow(object$coefficients)) {
-    stop("Mismatch in number of predictors")
-  }
-  
-  predictions <- X_new %*% object$coefficients
-  return(predictions)
+predict.LinearRegression <- function(object, x_new, ...) {
+  pred <- x_new %*% object$coefficients
+  return(pred)
 }
 
 # Experiment 1: Nonparametric vs linear model ----------------------------------
 
-n <- 100
+n <- 50
 p <- 3
 sigma.sq <- 0.001
 f <- function(X){
@@ -114,14 +124,12 @@ f <- function(X){
 }
 X <- matrix(runif(n*p, min = -1, max = 1), ncol = p)
 e <- rnorm(n, 0, sigma.sq)
-Y <- f(X) + e
+y <- f(X) + e
 
-plot(Y~X[,1])
-points((sin(4*seq(-1, 1, by=0.01)))~seq(-1, 1, by=0.01), type="l")
-plot(Y~X[,2])
-points((2*cos(20*seq(-1, 1, by=0.01)))~seq(-1, 1, by=0.01), type="l")
-plot(Y~X[,3])
-points((-3*seq(-1, 1, by=0.01))~seq(-1, 1, by=0.01), type="l")
+n_eval <- 2
+choose(n, n_eval)
+combn(n, n_eval)
+CV.v.selection(X, y, KernelRegression, LinearRegression, n_eval = 2)
 
 
 
