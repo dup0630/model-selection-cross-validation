@@ -1,6 +1,6 @@
 # Selection methods ------------------------------------------------------------
 # Hold out (single split)
-hold.out.select <- function(X_est, y_est, X_eval, y_eval, model1, model2){
+hold.out.selection <- function(X_est, y_est, X_eval, y_eval, model1, model2){
   # model 1
   f_hat1 <- model1(X_est, y_est)
   y_hat1 <- predict(f_hat1, X_eval)
@@ -15,21 +15,19 @@ hold.out.select <- function(X_est, y_est, X_eval, y_eval, model1, model2){
 
 
 # CV with voting
-CV.v.selection <- function(X, y, model1, model2, n_eval){
+CV.v.selection <- function(X, y, model1, model2, n_eval, splits=100){
   n <- length(y)
-  subsets <- combn(n, n_eval)
-  size <- choose(n, n_eval)
   votes <- c()
-  for (i in 1:size) {
+  for (i in 1:splits) {
     # Split
-    eval_indices <- subsets[, i]
-    est_indices <- setdiff(1:n, subsets[, i])
+    eval_indices <- sample(1:n, n_eval) # Run the risk of repeated splitting?
+    est_indices <- setdiff(1:n, eval_indices)
     X_est <- X[est_indices, ]
     y_est <- y[est_indices]
     X_eval <- X[eval_indices, ]
     y_eval <- y[eval_indices]
     # Compute and vote
-    tao <- hold.out.select(X_est, y_est, X_eval, y_eval, model1, model2)
+    tao <- hold.out.selection(X_est, y_est, X_eval, y_eval, model1, model2)
     votes <- c(votes, tao)
   }
   
@@ -38,16 +36,14 @@ CV.v.selection <- function(X, y, model1, model2, n_eval){
 
 
 # CV with averaging (delete-n_eval)
-CV.a.selection <- function(X, y, model1, model2, n_eval){
+CV.a.selection <- function(X, y, model1, model2, n_eval, splits=100){
   n <- length(y)
-  subsets <- combn(n, n_eval)
-  size <- choose(n, n_eval)
   CV1_losses <- c()
   CV2_losses <- c()
-  for (i in 1:size) {
+  for (i in 1:splits) {
     # Split
-    eval_indices <- set[, i]
-    est_indices <- setdiff(1:n, set[, i])
+    eval_indices <- sample(1:n, n_eval)
+    est_indices <- setdiff(1:n, eval_indices)
     X_est <- X[est_indices, ]
     y_est <- y[est_indices]
     X_eval <- X[eval_indices, ]
@@ -57,12 +53,12 @@ CV.a.selection <- function(X, y, model1, model2, n_eval){
     f_hat1 <- model1(X_est, y_est)
     y_hat1 <- predict(f_hat1, X_eval)
     CV1 <- sum((y_eval - y_hat1)^2)
-    CV1_losses <- c(CV1_losses, CV_1)
+    CV1_losses <- c(CV1_losses, CV1)
     # model 2
     f_hat2 <- model2(X_est, y_est)
     y_hat2 <- predict(f_hat2, X_eval)
     CV2 <- sum((y_eval - y_hat2)^2)
-    CV2_losses <- c(CV2_losses, CV_2)
+    CV2_losses <- c(CV2_losses, CV2)
   }
   L1 <- mean(CV1_losses)
   L2 <- mean(CV2_losses)
@@ -115,7 +111,7 @@ predict.LinearRegression <- function(object, x_new, ...) {
 
 # Experiment 1: Nonparametric vs linear model ----------------------------------
 
-n <- 50
+n <- 500
 p <- 3
 sigma.sq <- 0.001
 f <- function(X){
@@ -126,10 +122,10 @@ X <- matrix(runif(n*p, min = -1, max = 1), ncol = p)
 e <- rnorm(n, 0, sigma.sq)
 y <- f(X) + e
 
-n_eval <- 2
-choose(n, n_eval)
-combn(n, n_eval)
-CV.v.selection(X, y, KernelRegression, LinearRegression, n_eval = 2)
+n_eval=250
+
+CV.v.selection(X, y, KernelRegression, LinearRegression, n_eval)
+CV.a.selection(X, y, KernelRegression, LinearRegression, n_eval)
 
 
 
