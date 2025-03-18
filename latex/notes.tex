@@ -64,10 +64,11 @@
 \newcommand{\op}[1]{o_{\prob}\paren{#1}}
 \newcommand{\Op}[1]{O_{\prob}\paren{#1}}
 \newcommand{\sigmahat}{\hat{\sigma}^{2}_{n}}
+\newcommand{\fhat}[2]{\hat{f}_{#1, #2}}
 
 \title{Project: Cross-validation for model selection
 
-(rough draft)}
+(notes on papers)}
 \author{Diego Urdapilleta de la Parra}
 \begin{document}
 \maketitle
@@ -134,7 +135,7 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
     Now suppose that \(\alpha\in\Acal_{w}\). If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), the result follows by assumption H1. If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), then \ldots \textcolor{red}{MISSING.}
 \end{proof}
 
-\section{Leave-One-Out CV~\cite{shao_linear_1993}}
+\section{Leave-One-Out CV}
 In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each \(\alpha\in\Acal\).
 \begin{definition}
     The LOOCV estimator of \(R_{n}(\alpha)\) is 
@@ -205,7 +206,7 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
 
 A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1\) as \(n\to\infty\), where \(n_{v}\) is the number of validation samples.
 
-\section{Shao, 1997~\cite{shao_asymptotic_1997}}
+\section{Shao, 1997}
 \begin{definition}
     Let \(\alphahat{}_{n}\) be the model selected by minimizing some criterion \(\hat{R}_{n}\) over \(\Acal\), and let \(\alpha^{*}_{n}\) denote the model minimizing \(R_{n}\) over \(\Acal\). We say \(\hat{R}_{n}\) is \emph{consistent} if 
     \[\prob\set{\alphahat{} = \alpha^{*}}\to 1\]
@@ -274,9 +275,49 @@ Note that condition (\ref{eq:conditionQ}) is satisfied if \(\e\sim\Ncal(0_{n}, \
     This follows immediately from Theorem~\ref{prop:97thm1} and Proposition~\ref{prop:97prop1}.
 \end{proof}
 
+\textcolor{red}{INCOMPLETE: Missing \(\lambda_{n}\to\infty\) and cross-validation discussion.}
 
-\pagebreak
-\bibliographystyle{ieeetr}  
-\bibliography{references}
+\section{Yang, 2007}
+
+Here we consider two regression procedures, denoted \(\delta_{1}\) and \(\delta_{2}\), that yield estimators \(\hat{f}_{n, 1}\) and \(\hat{f}_{n, 2}\) of the regression function stisfying
+\[y_{i} = f(\x_{i}) + \epsilon_{i}\quad i\in[n],\]
+for \(\x_{i}\) iid, \(\Ep{\epsilon_{i}\mid \X} \aseq 0\) and \(\Ep{\epsilon_{i}^{2}\mid \X} \stackrel{\text{a.s.}}{<} \infty\).
+
+\begin{definition}
+    We say \(\delta_{1}\) is \emph{assymptotically better} than \(\delta_{2}\) under the loss function \(L\) if, for \(0<\varepsilon<1\), there exists \(c_{\varepsilon}>0\) such that
+    \[\prob\set{\Loss{\fhat{n}{2}}\geq (1+c_{\epsilon}\Loss{\fhat{n}{2}}) }\geq 1-\varepsilon.\]
+
+    Given that \(\delta_{1}\) is assymptotically better than \(\delta_{2}\), we say that a selection procedure is consistent if it selects \(\delta_{1}\) with probability tending to 1 as \(n\to\infty\).
+\end{definition}
+
+
+\subsubsection{Single-split cross-validation (Hold-out CV)}
+
+For this section, we assume that the first \(n_1\) elements in \(\data\) are used as a training/estimation sample and the remaining \(n_2\) elements make up the validation sample. We write \(p_{n}\) and \(q_{n}\) for the rates of convergence of the estimators \(\fhat{n}{1}\) and \(\fhat{n}{2}\), respectively. That is,
+\[\Op{p_{n}} = \norm{f - \fhat{n}{1}}_{2}\quad\text{and}\quad \Op{q_{n}} = \norm{f- \fhat{n}{2}}_{2}.\]
+
+The results rely on the following conditions:
+\begin{itemize}
+    \item \textbf{C0:} \(\Ep{\epsilon_{i}^{2}\mid \x_{i}}\) is bounded a.s. for \(i\in[n]\).
+    \item \textbf{C1:} There exists \(A_{n}\) such that \(\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\) for \(j=1,2\).
+    \item \textbf{C2:} One procedure is asymptotically better than the other.
+    \item \textbf{C3:} There exists \(M_{n}\) such that \(\norm{f-\fhat{n}{j}}_{4} / \norm{f-\fhat{n}{j}}_{4} = \op{M_{n}}\) for \(j=1,2\).
+\end{itemize}
+
+\begin{proposition}[Theorem]{{Yang, 2007}}
+    Suppose that \textbf{C0}--\textbf{C3} hold. Suppose, furthermore, that
+    \begin{enumerate}
+        \item \(n_{1}\to\infty\)
+        \item \(n_{2}\to\infty\)
+        \item \(n_{2}M_{n}^{-4} \to \infty\)
+        \item \(\sqrt{n_{2}}\max(p_{n_{1}}, q_{n_{1}})\)
+    \end{enumerate}
+    Then, the hold-out CV procedure is consistent.
+\end{proposition}
+
+\subsubsection{Voting cross-validation with multiple splits}
+\begin{proposition}[Theorem]{{Yang, 2007}}
+    Under the same conditions as in Theorem 4.1 and that the data is iid, the voting CV procedure with multiple splits is consistent.
+\end{proposition}
 
 \end{document}
