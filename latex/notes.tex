@@ -1,7 +1,8 @@
 \documentclass[12pt, letter paper]{article}
 \usepackage{amsmath,amsthm,amsfonts,amssymb,geometry,fancyhdr,graphicx,xcolor}
-\usepackage[most]{tcolorbox}
-
+%\usepackage[most]{tcolorbox}
+\usepackage{biblatex} 
+\addbibresource{citations.bib}
 
 \geometry{letterpaper, margin=1in}
 
@@ -9,17 +10,24 @@
 \DeclareMathAlphabet{\mathmybb}{U}{bbold}{m}{n}
 \newcommand{\1}{\mathmybb{1}}
 
-\newtcolorbox[auto counter, number within=section]{proposition}[2][Proposition]{%
-  colframe=blue!50!black,
-  colback=blue!10,
-  coltitle=white,
-  fonttitle=\bfseries,
-  title=#1~\thetcbcounter\ifx#2\empty\else~(#2)\fi}
+%\newtcolorbox[auto counter, number within=section]{proposition}[2][Proposition]{%
+%  colframe=blue!50!black,
+%  colback=blue!10,
+%  coltitle=white,
+%  fonttitle=\bfseries,
+%  title=#1~\thetcbcounter\ifx#2\empty\else~(#2)\fi}
+%
+%\newtcolorbox[auto counter, number within=section]{definition}{%
+%  fonttitle=\bfseries,
+%  title=Definition~\thetcbcounter,
+%  label={def:\thetcbcounter}}
 
-\newtcolorbox[auto counter, number within=section]{definition}{%
-  fonttitle=\bfseries,
-  title=Definition~\thetcbcounter,
-  label={def:\thetcbcounter}}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\newtheorem{lemma}[proposition]{Lemma}
 
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Int}{\mathbb{Z}}
@@ -71,8 +79,16 @@
 (notes on papers)}
 \author{Diego Urdapilleta de la Parra}
 \begin{document}
+
 \maketitle
-\section{Setup and preliminary results}
+
+\textcolor{red}{Note: I removed the boxes to keep the proposition enumeration consistent, and to make the text easier to read.}
+
+\tableofcontents
+
+\newpage
+\section{Linear Model Selection}
+\subsection{Setup and preliminary results}
 Let \(n,p_{n}\) be positive integers and \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) be a set of independent data points drawn from a distribution \(\prob_{y, \x}\) for \((y, \x)\in\R^{1+p_{n}}\). We treat the \(\x_{i}\) as predictors of the outcome \(y_{i}\), and we assume a linear model
 \[\y = \X\bbeta + \e\]
 where \(\X = {[\x_{1}\;\x_{2}\;\cdots\;\x_{n}]}^{\top}\in\R^{n\times p_{n}}\) is the design matrix, \(\y = \sqbr{y_{1}\; y_{2}\;\cdots\; y_{n}}^{\top}\), and \(\e\) is a mean-zero random vector with \(\Cov{\e} = \sigma_{2}\boldsymbol{I}_{n}\).
@@ -93,21 +109,22 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
     \(R_{n}(\alpha):= \Ep{\Loss{\alpha}\mid\X}\).
 \end{definition}
 
-\begin{tcolorbox}[title=Assumptions, fonttitle=\bfseries]
-    The following conditions will be used throughout the paper:
+%\begin{tcolorbox}[title=Assumptions, fonttitle=\bfseries]
+    The following conditions will be used throughout this section:
     \begin{align*}
-        &\mathbf{H1:}\qquad \liminf_{n\to\infty} \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}>0 \text{ for all }\alpha \in\Acal\\
-        &\mathbf{H2:} \qquad \X^{\top}\X = O(n)\quad\text{and}\quad\paren{\X^{\top}\X}^{-1}= O\paren{n^{-1}}\\[2.5mm]
-        &\mathbf{H3:}\qquad \lim_{n\to\infty}\max_{i\leq n}\,h_{ii,\alpha} = 0 \text{ for all }\alpha \in\Acal\\
-        &\mathbf{H4:}\qquad \sum_{\alpha\in\Acal_{w}}\frac{1}{\paren{nR_{n}(\alpha)}^{m}}\to_{\prob}0\quad\text{for some }m\geq 1
+        &\mathbf{H1:}\qquad \liminf_{n\to\infty} \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}>0 \text{ for all }\alpha \in\Acal.\\
+        &\mathbf{H2:} \qquad \X^{\top}\X = O(n)\quad\text{and}\quad\paren{\X^{\top}\X}^{-1}= O\paren{n^{-1}}.\\[2.5mm]
+        &\mathbf{H3:}\qquad \lim_{n\to\infty}\max_{i\leq n}\,h_{ii,\alpha} = 0 \text{ for all }\alpha \in\Acal.\\
+        &\mathbf{H4:}\qquad \sum_{\alpha\in\Acal_{w}}\frac{1}{\paren{nR_{n}(\alpha)}^{m}}\to_{\prob}0\quad\text{for some }m\geq 1.
     \end{align*}
-\end{tcolorbox}
+%\end{tcolorbox}
 
-\begin{proposition}{}
+\begin{proposition}
     If we assume a linear model \(\y = \X\beta + \e\), then
     \[\Loss{\alpha} = \frac{1}{n}\normsq{H_{\alpha}\e} + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\quad\text{and}\quad R_{n}(\alpha) = \frac{1}{n}\sigma^{2}p_{n}(\alpha) + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta},\]
     where \(H_{\alpha} = \X_{\alpha}\paren{\X_{\alpha}^{\top}\X_{\alpha}}^{-1}\X_{\alpha}^{\top}\) and \(M_{\alpha}= I_{n} - H_{\alpha}\).
 \end{proposition}
+
 \begin{proof}
     First, we have that
     \begin{align*}
@@ -122,9 +139,10 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
     For the second part, we note that \(\Ep{\normsq{H_{\alpha}\e}\mid\X} = \sigma^{2}p_{n}(\alpha)\) by the ``trace trick'', where \(p_{n}(\alpha)\) denotes the size of model \(\alpha\).
 \end{proof}
 
-\begin{proposition}{}
+\begin{proposition}
     Suppose that the set of correct candidate models \(\Acal_{c}\subset\Acal\) is non-empty, and let \(\alpha^{*}\) be the smallest correct model in \(\Acal_{c}\). Then, \(\alpha^{*}\) minimizes \(R_{n}(\alpha)\) over \(\alpha\in\Acal\).
 \end{proposition}
+
 \begin{proof}
     Let \(\alpha\in\Acal\) be arbitrary and suppose that \(\alpha\in\Acal_{c}\). Then, \(\X_{\alpha}\bbeta_{\alpha} = \X\bbeta\) and \(p_{n}(\alpha^{*})\leq p_{n}(\alpha)\). Thus,
     \begin{align*}
@@ -135,19 +153,19 @@ where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns in
     Now suppose that \(\alpha\in\Acal_{w}\). If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), the result follows by assumption H1. If \(p_{n}(\alpha)\geq p_{n}(\alpha^{*})\), then \ldots \textcolor{red}{MISSING.}
 \end{proof}
 
-\section{Leave-One-Out CV}
+\subsection{Shao, 1993: Notes on Leave-One-Out CV}
 In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each \(\alpha\in\Acal\).
 \begin{definition}
-    The LOOCV estimator of \(R_{n}(\alpha)\) is 
+    The LOOCV estimator of \(R_{n}(\alpha)\) is definded as
     \[\loocv{\alpha}:= \frac{1}{n}\sum_{i=1}^{n}\paren{\frac{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}{1-h_{ii,\alpha}}}^{2}\]
 \end{definition}
 
-\begin{proposition}[Lemma]{{Shao, 1993}}
+\begin{lemma}[Shao, 1993]
     \[\loocv = \begin{cases}
         R_{n}(\alpha) + \sigma^{2} + \op{1} &\text{ if }\alpha\in\Acal_{w}\\[2mm]
         \frac{1}{n}\normsq{M_{\alpha}\e} + \frac{2}{n}\sigma^{2}p(\alpha) + \op{n^{-1}} &\text{ if }\alpha\in\Acal_{c}
     \end{cases}\]
-\end{proposition}
+\end{lemma}
 
 \begin{proof}
     Using the Taylor expansion of \(1/{(1-x)}^{2} = 1+2x + O(x^{2})\), we have
@@ -180,7 +198,7 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     proving the second case.
 \end{proof}
 
-\begin{proposition}{{Shao, 1993}}
+\begin{proposition}[Shao, 1993]
     Let \(\alphahat{(1)}\) be the model minimizing \(\loocv{\alpha}\).
     \begin{enumerate}
         \item Under H1, H2, and H3, \[\lim_{n\to\infty}\prob\paren{\alphahat{(1)}\in\Acal_{w}}=0.\]
@@ -200,13 +218,13 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     Conversely, if \(\lim_{n\to\infty}\prob\paren{\alphahat{(1)}=\alpha^{*}} = 1\) \textcolor{red}{MISSING}
 \end{proof}
 
-\begin{proposition}[Corollary]{}
+\begin{corollary}
     LOOCV is not consistent. In particular, overfits with non-vanishing probability.
-\end{proposition}
+\end{corollary}
 
 A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1\) as \(n\to\infty\), where \(n_{v}\) is the number of validation samples.
 
-\section{Shao, 1997}
+\subsection{Shao, 1997}
 \begin{definition}
     Let \(\alphahat{}_{n}\) be the model selected by minimizing some criterion \(\hat{R}_{n}\) over \(\Acal\), and let \(\alpha^{*}_{n}\) denote the model minimizing \(R_{n}\) over \(\Acal\). We say \(\hat{R}_{n}\) is \emph{consistent} if 
     \[\prob\set{\alphahat{} = \alpha^{*}}\to 1\]
@@ -214,7 +232,7 @@ A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1
     \[\frac{R_{n}(\alphahat{})}{R_{n}(\alpha^{*}_{n})}\to 1\quad\text{a.s.}\]
 \end{definition}
 
-\begin{proposition}[Proposition]{{Shao, 1997}}
+\begin{proposition}[Shao, 1997]
     Suppose H1, \(p_{n}/n\to 0\), and that \(\Acal_{c}\) is non-empty for all but finitely many \(n\).
     \begin{enumerate}
         \item If \(|\Acal_{c}|=1\) for all but finitely many \(n\), then consistency is equivalent to efficiency in the sense of Definition 3.1
@@ -231,16 +249,16 @@ A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1
     where \(\sigmahat\) is an estimator of \(\sigma^{2}\) and \(\lambda_{n}\) is a sequence of positive real numbers satisfying \(\lambda_{n}\geq 2\) and \(\lambda_{n}/n\to 0\).
 \end{definition}
 
-\subsection{The case of \(\lambda_{n} \equiv 2\)}
+\subsubsection{The case of \(\lambda_{n} \equiv 2\)}
 
-\begin{proposition}{{Shao, 1997}}
+\begin{proposition}[Shao, 1997]\label{prop:97prop1}
     Suppose that \(\lambda_{n}=2\) for all \(n\geq 1\) and that \(\sigmahat\) is a consistent estimator of \(\sigma^{2}\). Then,
     \[\Rhat{2}{\alpha} = \begin{cases}
         \textcolor{red}{TBD}
     \end{cases}\]
 \end{proposition}
 
-\begin{proposition}[Theorem]{{Shao, 1997}}
+\begin{theorem}[Shao, 1997]\label{prop:97thm1}
     Suppose that H4 holds and that \(\sigmahat\) is consistent for \(\sigma^{2}\). Then, \(\alphahat{2}_{n}\) is consistent and asymptotically loss efficient.
     \begin{enumerate}
         \item If \(|\Acal_{c}|\leq1\) for all but finitely many \(n\), then \(\alphahat{2}_{n}\) asymptotically loss efficient.
@@ -261,23 +279,26 @@ A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1
         \end{equation}
         is necessary and sufficient for the asymptotic loss efficiency of \(\alphahat{2}_{n}\) whenever \(|\Acal_{c}|\) is bounded or \(\Acal\) is embedded.
     \end{enumerate}
-\end{proposition}
+\end{theorem}
 
 \begin{proof}
     \textcolor{red}{MISSING}
 \end{proof}
 
 Note that condition (\ref{eq:conditionQ}) is satisfied if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_{n})\). Condition (\ref{eq:conditionP}) is satisfied if \(\Acal\) does not contain two correct models with fixed dimensions for all but finitely many \(n\).
-\begin{proposition}[Corollary]{{Shao, 1997}}
+\begin{corollary}[Shao, 1997]
     If \(\Acal_{c}\) contains exactly one model with fixed dimension for all but finitely many \(n\), then \(\alphahat{2}_{n}\) is consistent.
-\end{proposition}
+\end{corollary}
+
 \begin{proof}
     This follows immediately from Theorem~\ref{prop:97thm1} and Proposition~\ref{prop:97prop1}.
 \end{proof}
 
-\textcolor{red}{INCOMPLETE: Missing \(\lambda_{n}\to\infty\) and cross-validation discussion.}
+\textcolor{red}{INCOMPLETE:\@ Missing \(\lambda_{n}\to\infty\) and cross-validation discussion.}
 
-\section{Yang, 2007}
+\section{Nonlinear Model Selection}
+
+\subsection{Yang, 2007}
 
 Here we consider two regression procedures, denoted \(\delta_{1}\) and \(\delta_{2}\), that yield estimators \(\hat{f}_{n, 1}\) and \(\hat{f}_{n, 2}\) of the regression function stisfying
 \[y_{i} = f(\x_{i}) + \epsilon_{i}\quad i\in[n],\]
@@ -291,20 +312,22 @@ for \(\x_{i}\) iid, \(\Ep{\epsilon_{i}\mid \X} \aseq 0\) and \(\Ep{\epsilon_{i}^
 \end{definition}
 
 
-\subsubsection{Single-split cross-validation (Hold-out CV)}
+\subsubsection{Single-split cross-validation (the Hold-out)}
 
 For this section, we assume that the first \(n_1\) elements in \(\data\) are used as a training/estimation sample and the remaining \(n_2\) elements make up the validation sample. We write \(p_{n}\) and \(q_{n}\) for the rates of convergence of the estimators \(\fhat{n}{1}\) and \(\fhat{n}{2}\), respectively. That is,
 \[\Op{p_{n}} = \norm{f - \fhat{n}{1}}_{2}\quad\text{and}\quad \Op{q_{n}} = \norm{f- \fhat{n}{2}}_{2}.\]
 
-The results rely on the following conditions:
+The hold-out cross-validation method consists in selecting the estimator that minimizes the hold-out loss
+\[L_{\mathrm{ho}}(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{i} - \fhat{n}{j}(\x_{i})}^{2}\quad\text{for }j=1,2.\]
+The propositions in this section rely on the following conditions:
 \begin{itemize}
-    \item \textbf{C0:} \(\Ep{\epsilon_{i}^{2}\mid \x_{i}}\) is bounded a.s. for \(i\in[n]\).
+    \item \textbf{C0:} \(\Ep{\epsilon_{i}^{2}\mid \x_{i}}\) is bounded a.s.\ for \(i\in[n]\).
     \item \textbf{C1:} There exists \(A_{n}\) such that \(\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\) for \(j=1,2\).
     \item \textbf{C2:} One procedure is asymptotically better than the other.
     \item \textbf{C3:} There exists \(M_{n}\) such that \(\norm{f-\fhat{n}{j}}_{4} / \norm{f-\fhat{n}{j}}_{4} = \op{M_{n}}\) for \(j=1,2\).
 \end{itemize}
 
-\begin{proposition}[Theorem]{{Yang, 2007}}
+\begin{theorem}[Yang, 2007]\label{prop:yangth1}
     Suppose that \textbf{C0}--\textbf{C3} hold. Suppose, furthermore, that
     \begin{enumerate}
         \item \(n_{1}\to\infty\)
@@ -313,11 +336,37 @@ The results rely on the following conditions:
         \item \(\sqrt{n_{2}}\max(p_{n_{1}}, q_{n_{1}})\)
     \end{enumerate}
     Then, the hold-out CV procedure is consistent.
-\end{proposition}
+\end{theorem}
+
+A very detailed proof of this result is provided in Yang~\cite{yang_2007}, so it will be skipped here.
 
 \subsubsection{Voting cross-validation with multiple splits}
-\begin{proposition}[Theorem]{{Yang, 2007}}
-    Under the same conditions as in Theorem 4.1 and that the data is iid, the voting CV procedure with multiple splits is consistent.
-\end{proposition}
 
+The (theoretical) majority-vote cross-validation method proceeds as follows: for each permutation \(i\mapsto\pi(i)\) of the data, we compute the estimators \(\fhat{n_{1}}{1}\) and \(\fhat{n_{1}}{2}\) using the first \(n_{1}\) data points \((y_{\pi(1)}, \x_{\pi(1)}), \ldots,(y_{\pi(n_1)}, \x_{\pi(n_1)})\) as the training sample and the remaining \(n_{2}=n-n_{1}\) elements as the validation sample. We then find the estimator that minimizes the hold-out loss
+\[L_{\pi}(\fhat{n_{1}}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{\pi(i)} - \fhat{n_{1}}{j}\paren{\x_{\pi(i)}}}^{2}\qquad \text{for }j=1,2.\]
+The chosen estimator is the one favored by the majority of the permutations. More formally, we define 
+\[\tau_{\pi} = \ind{L_{\pi}(\fhat{n_{1}}{1}) \leq L_{\pi}(\fhat{n_{1}}{2})}\]
+We then define our selection criterion as follows:
+\[\hat{f}_{n} = \begin{cases}
+    \fhat{n}{1} &\text{if }\sum_{\pi\in\Pi}\tau_{\pi} \geq {n!}/{2},\\[2mm]
+    \fhat{n}{2} &\text{otherwise,}
+\end{cases}\]
+where \(\Pi\) denotes the set of all permutations of \([n]\).
+
+\begin{theorem}[Yang, 2007]\label{prop:yangth2}
+    Under the conditions of Theorem 4.1 and the condition that the data is iid, the majority-vote cross-validation method is consistent.
+\end{theorem}
+
+\begin{proof}
+    Suppose that \(\delta_{1}\) is asymptotically better than \(\delta_{2}\). For \(\pi\in \Pi\), we have that
+    \[\prob\set{L_{\pi}\paren{\fhat{n_{1}}{1}} \leq L_{\pi}\paren{\fhat{n_{1}}{2}}} = \Ep{\tau_{\pi}} \stackrel{(*)}{=} \Ep{\frac{1}{n!}\sum_{\pi\in\Pi}\tau_{\pi}}.\]
+    The equality at \((*)\) follows from the fact that the data are iid, hence exchangeable, and thus the \(\tau_\pi\) are identically distributed. By Theorem~\ref{prop:yangth1}, the right-hand side converges to 1 as \(n\to\infty\). Since the average \(1/n! \sum_{\pi}\tau_{\pi}\) is almost surely at most 1, it follows that \(1/n! \sum_{\pi}\tau_{\pi} \to 1\) in probability, and the majority-vote cross-validation method is consistent.
+\end{proof}
+
+\textbf{Remark:} The proof of Theorem~\ref{prop:yangth2} does not rely on using the whole of \(\Pi\) for the majority vote. Indeed, Theorem~\ref{prop:yangth1} shows that even a single split is enough. What we gain by considering \(\Pi\) (or a subset of it) is more robustness to the choice of the training sample.
+ 
+
+
+\newpage
+\printbibliography{}
 \end{document}
