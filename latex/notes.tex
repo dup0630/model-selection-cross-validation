@@ -1,9 +1,9 @@
 \documentclass[12pt, letter paper]{article}
-\usepackage{amsmath,amsthm,amsfonts,amssymb,geometry,fancyhdr,graphicx,xcolor}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,geometry,fancyhdr,graphicx,xcolor,biblatex}
+%\usepackage{minted}
 %\usepackage[most]{tcolorbox}
-\usepackage{biblatex} 
-\addbibresource{citations.bib}
 
+\addbibresource{citations.bib}
 \geometry{letterpaper, margin=1in}
 
 % For indicator functions:
@@ -306,7 +306,7 @@ for \(\x_{i}\) iid, \(\Ep{\epsilon_{i}\mid \X} \aseq 0\) and \(\Ep{\epsilon_{i}^
 
 \begin{definition}
     We say \(\delta_{1}\) is \emph{assymptotically better} than \(\delta_{2}\) under the loss function \(L\) if, for \(0<\varepsilon<1\), there exists \(c_{\varepsilon}>0\) such that
-    \[\prob\set{\Loss{\fhat{n}{2}}\geq (1+c_{\epsilon}\Loss{\fhat{n}{2}}) }\geq 1-\varepsilon.\]
+    \[\prob\set{\Loss{\fhat{n}{2}}\geq (1+c_{\epsilon})\Loss{\fhat{n}{2}} }\geq 1-\varepsilon.\]
 
     Given that \(\delta_{1}\) is assymptotically better than \(\delta_{2}\), we say that a selection procedure is consistent if it selects \(\delta_{1}\) with probability tending to 1 as \(n\to\infty\).
 \end{definition}
@@ -363,8 +363,7 @@ where \(\Pi\) denotes the set of all permutations of \([n]\).
     The equality at \((*)\) follows from the fact that the data are iid, hence exchangeable, and thus the \(\tau_\pi\) are identically distributed. By Theorem~\ref{prop:yangth1}, the right-hand side converges to 1 as \(n\to\infty\). Since the average \(1/n! \sum_{\pi}\tau_{\pi}\) is almost surely at most 1, it follows that \(1/n! \sum_{\pi}\tau_{\pi} \to 1\) in probability, and the majority-vote cross-validation method is consistent.
 \end{proof}
 
-\textbf{Remark:} The proof of Theorem~\ref{prop:yangth2} does not rely on using the whole of \(\Pi\) for the majority vote. Indeed, Theorem~\ref{prop:yangth1} shows that even a single split is enough. What we gain by considering \(\Pi\) (or a subset of it) is more robustness to the choice of the training sample.
- 
+The proof of Theorem~\ref{prop:yangth2} does not rely on using the whole of \(\Pi\) for the majority vote. Indeed, Theorem~\ref{prop:yangth1} shows that even a single split is enough for consistency. A natural question to ask, then, is what do we gain by using multiple splits? The simulation below shows that the majority-vote method is more robust to the choice of the training sample size \(n_{1}\) than the hold-out method.
 
 
 \newpage

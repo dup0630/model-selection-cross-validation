@@ -1,6 +1,6 @@
 # Selection methods ------------------------------------------------------------
 # Hold out (single split)
-hold.out.selection <- function(X_est, y_est, X_eval, y_eval, model1, model2){
+ho_selection <- function(X_est, y_est, X_eval, y_eval, model1, model2){
   # model 1
   f_hat1 <- model1(X_est, y_est)
   y_hat1 <- predict(f_hat1, X_eval)
@@ -15,7 +15,7 @@ hold.out.selection <- function(X_est, y_est, X_eval, y_eval, model1, model2){
 
 
 # CV with voting
-CV.v.selection <- function(X, y, model1, model2, n_eval, splits=100){
+CV_v_selection <- function(X, y, model1, model2, n_eval, splits=100){
   n <- length(y)
   votes <- c()
   for (i in 1:splits) {
@@ -27,7 +27,7 @@ CV.v.selection <- function(X, y, model1, model2, n_eval, splits=100){
     X_eval <- X[eval_indices, ]
     y_eval <- y[eval_indices]
     # Compute and vote
-    tao <- hold.out.selection(X_est, y_est, X_eval, y_eval, model1, model2)
+    tao <- ho_selection(X_est, y_est, X_eval, y_eval, model1, model2)
     votes <- c(votes, tao)
   }
   
@@ -36,7 +36,7 @@ CV.v.selection <- function(X, y, model1, model2, n_eval, splits=100){
 
 
 # CV with averaging (delete-n_eval)
-CV.a.selection <- function(X, y, model1, model2, n_eval, splits=100){
+CV_a_selection <- function(X, y, model1, model2, n_eval, splits=100){
   n <- length(y)
   CV1_losses <- c()
   CV2_losses <- c()
@@ -113,19 +113,19 @@ predict.LinearRegression <- function(object, x_new, ...) {
 
 n <- 500
 p <- 3
-sigma.sq <- 0.001
+sigma_sq <- 0.001
 f <- function(X){
   z <- sin(4*X[, 1]) + 2 * cos(20*X[, 2]) - 3*X[, 3]
   return(z)
 }
 X <- matrix(runif(n*p, min = -1, max = 1), ncol = p)
-e <- rnorm(n, 0, sigma.sq)
+e <- rnorm(n, 0, sigma_sq)
 y <- f(X) + e
 
 n_eval=250
 
-CV.v.selection(X, y, KernelRegression, LinearRegression, n_eval)
-CV.a.selection(X, y, KernelRegression, LinearRegression, n_eval)
+CV_v_selection(X, y, KernelRegression, LinearRegression, n_eval)
+CV_a_selection(X, y, KernelRegression, LinearRegression, n_eval)
 
 
 
