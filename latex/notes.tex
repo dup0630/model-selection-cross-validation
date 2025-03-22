@@ -29,6 +29,7 @@
 \newtheorem{corollary}[proposition]{Corollary}
 \newtheorem{lemma}[proposition]{Lemma}
 
+\DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Int}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
@@ -73,6 +74,9 @@
 \newcommand{\Op}[1]{O_{\prob}\paren{#1}}
 \newcommand{\sigmahat}{\hat{\sigma}^{2}_{n}}
 \newcommand{\fhat}[2]{\hat{f}_{#1, #2}}
+\newcommand{\ftilde}[1]{\tilde{f}_{#1}}
+\newcommand{\lambdahat}[1]{\hat{\lambda}_{#1}}
+\newcommand{\blambdahat}{\boldsymbol{\hat{\lambda}}}
 
 \title{Project: Cross-validation for model selection
 
@@ -87,13 +91,13 @@
 \tableofcontents
 
 \newpage
-\section{Linear Model Selection}
+\section{CV for Linear Model Selection}
 \subsection{Setup and preliminary results}
 Let \(n,p_{n}\) be positive integers and \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) be a set of independent data points drawn from a distribution \(\prob_{y, \x}\) for \((y, \x)\in\R^{1+p_{n}}\). We treat the \(\x_{i}\) as predictors of the outcome \(y_{i}\), and we assume a linear model
 \[\y = \X\bbeta + \e\]
 where \(\X = {[\x_{1}\;\x_{2}\;\cdots\;\x_{n}]}^{\top}\in\R^{n\times p_{n}}\) is the design matrix, \(\y = \sqbr{y_{1}\; y_{2}\;\cdots\; y_{n}}^{\top}\), and \(\e\) is a mean-zero random vector with \(\Cov{\e} = \sigma_{2}\boldsymbol{I}_{n}\).
 
-We consider the following setup for model selection. Let \(\Acal\subset2^{[p_{n}]}\) be a family of index sets representing candidate models. For \(\alpha\in\Acal\), we denote by \(p_{n}(\alpha)\) the cardinality of \(\alpha\) and consider the model
+With the goal of model selection in mind, we let \(\Acal\subset2^{[p_{n}]}\) be a family of index sets representing candidate models. For \(\alpha\in\Acal\), we denote by \(p_{n}(\alpha)\) the cardinality of \(\alpha\) and consider the models given by
 \[m_{\alpha}(\X) = \X_{\alpha}\bbeta_{\alpha},\]
 where \(\X_{\alpha}\) is the sub-matrix of \(\X\) containing only the columns indexed by \(\alpha\), and \(\bbeta_{\alpha}\) is the coefficient vector containing only the entries indexed by \(\alpha\) in \(\bbeta\).
 \begin{enumerate}
@@ -296,12 +300,14 @@ Note that condition (\ref{eq:conditionQ}) is satisfied if \(\e\sim\Ncal(0_{n}, \
 
 \textcolor{red}{INCOMPLETE:\@ Missing \(\lambda_{n}\to\infty\) and cross-validation discussion.}
 
-\section{Nonlinear Model Selection}
+\section{CV for Nonparametric Model Selection}
 
 \subsection{Yang, 2007}
 
 Here we consider two regression procedures, denoted \(\delta_{1}\) and \(\delta_{2}\), that yield estimators \(\hat{f}_{n, 1}\) and \(\hat{f}_{n, 2}\) of the regression function stisfying
-\[y_{i} = f(\x_{i}) + \epsilon_{i}\quad i\in[n],\]
+\begin{equation}\label{eq:regressionmodel}
+    y_{i} = f(\x_{i}) + \epsilon_{i}\quad i\in[n],
+\end{equation}
 for \(\x_{i}\) iid, \(\Ep{\epsilon_{i}\mid \X} \aseq 0\) and \(\Ep{\epsilon_{i}^{2}\mid \X} \stackrel{\text{a.s.}}{<} \infty\).
 
 \begin{definition}
@@ -363,8 +369,34 @@ where \(\Pi\) denotes the set of all permutations of \([n]\).
     The equality at \((*)\) follows from the fact that the data are iid, hence exchangeable, and thus the \(\tau_\pi\) are identically distributed. By Theorem~\ref{prop:yangth1}, the right-hand side converges to 1 as \(n\to\infty\). Since the average \(1/n! \sum_{\pi}\tau_{\pi}\) is almost surely at most 1, it follows that \(1/n! \sum_{\pi}\tau_{\pi} \to 1\) in probability, and the majority-vote cross-validation method is consistent.
 \end{proof}
 
-The proof of Theorem~\ref{prop:yangth2} does not rely on using the whole of \(\Pi\) for the majority vote. Indeed, Theorem~\ref{prop:yangth1} shows that even a single split is enough for consistency. A natural question to ask, then, is what do we gain by using multiple splits? The simulation below shows that the majority-vote method is more robust to the choice of the training sample size \(n_{1}\) than the hold-out method.
+The proof of Theorem~\ref{prop:yangth2} does not require using the entire set \(\Pi\) of permutations for the majority vote. In fact, Theorem~\ref{prop:yangth1} establishes that even a single data split suffices for consistency, provided the splitting conditions are met. Moreover, Yang~\cite{yang_2007} presents a counterexample demonstrating that these conditions are not merely sufficient but necessary, hence showing that the number of splits does not affect consistency. In other words, multiple splits in cross-validation cannot rescue an inconsistent single-split procedure. A natural question, then, is: if multiple splits do not improve consistency, what is their benefit? This will be explored in the simulation later on.~\textcolor{red}{(MAYBE?)}
 
+\section{Aggregation}
+\subsection{Bunea et al., 2007}
+
+As before, we consider independent pairs in \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) satisfying (\ref{eq:regressionmodel}). Suppose that we have \(M\) candidate estimators of the regression function, denoted \(\fhat{n}{1}, \fhat{n}{2}, \ldots, \fhat{n}{M}\). Instead of selecting a single estimator, we combine them into an \emph{aggregate} \(\ftilde{\lambdahat{}}\) given by
+\[\ftilde = \sum_{j=1}^{M}\lambdahat{j} \fhat{n}{j},\]
+with \(\lambdahat{}:=\paren{\lambdahat{1}, \ldots, \lambdahat{M}}\in \Lambda\subset\R^{M}\) chosen to satisfy some optimality criterion.
+
+\subsubsection{Four types of aggregation}
+
+There are four aggregation schemes considered in Bunea et al.~\cite{bunea_2007}, each of which is characterized by a different set \(\Lambda\) of admissible weights \(\lambdahat{}\):
+\begin{itemize}
+    \item Model Selection Aggregation (MS): A single estimator is selected. That is,\[\Lambda_{\mathrm{MS}} = \set{\lambda\in\R^{M}:\lambda = \boldsymbol{e}_{j}\text{ for some }j\in[M]}.\]
+    \item Linear Aggregation (L): \(\ftilde{\lambdahat{}}\) is chosen among all linear combinations of the estimators. That is, \[\Lambda_{\mathrm{L}} = \R^{M}.\]
+    \item Convex Aggregation (C): \(\ftilde{\lambdahat{}}\) is chosen among all convex combinations of the estimators. That is, \[\Lambda_{\mathrm{C}} = \set{\lambda\in\R^{M}:\lambda\geq 0, \sum_{j=1}^{M}\lambda_{j} = 1}.\]
+    \item Subset Selection (S): We select and aggregate at most \(D\) estimators from the pool, for a given \(D\leq M\). That is, \[\Lambda_{\mathrm{S}} = \set{\lambda\in\R^{M}:\lambda\text{ has at most \(D\) non-zero entries}}.\]
+\end{itemize}
+
+\subsubsection{Optimality criteria}
+
+In an ideal scenario, we would like to select the weights \(\lambdahat{}\) that satisfy 
+\[\lambda^{*} = \argmin_{\lambda\in\Lambda}\norm{f - \ftilde{lambda}}_{p}.\]
+for some norm \(\norm{\cdot}_{p}\). However, since the true regression function \(f\) is unknown, this approach is clearly not feasible. Instead, we consider the \emph{oracle inequality} \begin{equation}
+    \label{eq:oracleineq}
+    \E\norm{f - \ftilde{\lambdahat{}}}_{p} \leq \inf_{\lambda\in\Lambda}\norm{f - \ftilde{\lambda}}_{p} + \Delta_{n,M}.
+\end{equation}
+for some error term \(\Delta_{n,M}>0\) independent of \(f\).
 
 \newpage
 \printbibliography{}
