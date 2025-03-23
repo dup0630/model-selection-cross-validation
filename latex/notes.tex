@@ -385,7 +385,8 @@ In an ideal scenario, we would like to select  weights \(\lambda^*\) satisying
 \[\lambda^{*} = \argmin_{\lambda\in\Lambda}\Ep{d\paren{f, \ftilde{\lambda}}}\]
 for some distance function \(d\) (e.g., the \(L_{2}\) norm). However, since the true regression function \(f\) is unknown, this approach is clearly not feasible. Another way of evaluating the estimator is to consider its maximum risk on a class of functions \(\Theta\) containing \(f\), given by 
 \[\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambda}}_{2}.\]
-We would then attempt to find the \(\lambdahat{}\) that minimizes this quantity. However, once again, this is not an easy task, as \(\Theta\) may be too large or unknown. We also know that the expected risk goes to 0 as \(n\to \infty\). (\textcolor{red}{NOT SURE ABOUT THIS WHOLE PART})
+We would then attempt to find the \(\lambdahat{}\) that minimizes this quantity. However, once again, this is not an easy task, as \(\Theta\) may be too large or unknown. We also know that the expected risk goes to 0 as \(n\to \infty\).
+(\textcolor{red}{NOT SURE ABOUT THIS WHOLE PART})
 
 Instead, we consider an alternative approach using \emph{oracles.} 
 
