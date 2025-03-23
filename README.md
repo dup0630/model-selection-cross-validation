@@ -23,6 +23,10 @@
     - Projection estimator
     - Oracles
 
+# Questions
+- Why are optimal rates squared?
+- Why is the oracle defined as a map?
+- What is the relationship between the oracle approach and a minimax rate-optimal estimator?
 
 
 

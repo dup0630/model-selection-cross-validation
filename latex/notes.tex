@@ -30,11 +30,8 @@
 \newtheorem{lemma}[proposition]{Lemma}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
-\newcommand{\N}{\mathbb{N}}
-\newcommand{\Int}{\mathbb{Z}}
+
 \newcommand{\R}{\mathbb{R}}
-\newcommand{\Pcal}{\mathcal{P}}
-\newcommand{\Scal}{\mathcal{S}}
 \newcommand{\Borel}[1]{\mathcal{B}\paren{#1}}
 \newcommand{\0}{\emptyset}
 \newcommand{\prob}{\mathbb{P}}
@@ -43,14 +40,9 @@
 \newcommand{\paren}[1]{\left(#1 \right)}
 \newcommand{\sqbr}[1]{\left[#1 \right]}
 \newcommand{\set}[1]{\left\{ #1 \right\}}
-\newcommand{\norm}[1]{\left|\hspace{-1pt}\left|#1 \right|\hspace{-1pt}\right|}
+\newcommand{\norm}[1]{|\hspace{-1pt}|#1 |\hspace{-1pt}|}
 \newcommand{\normsq}[1]{\norm{#1}^{2}}
-\newcommand{\field}{\mathcal{F}}
 \newcommand{\ind}[1]{\mathmybb{1}_{#1}}
-\newcommand{\mudi}{\,\mu\paren{di}}
-\newcommand{\nudj}{\,\nu\paren{dj}}
-\newcommand{\dmu}{\,d\mu}
-\newcommand{\dnu}{\,d\nu}
 \newcommand{\data}{\mathcal{D}_{n}}
 \newcommand{\Hcal}{\mathcal{H}}
 \newcommand{\Acal}{\mathcal{A}}
@@ -60,7 +52,6 @@
 \newcommand{\x}{\boldsymbol{x}}
 \newcommand{\y}{\boldsymbol{y}}
 \newcommand{\e}{\boldsymbol{e}}
-\newcommand{\acvfx}[1]{\gamma_{X}\paren{#1}}
 \newcommand{\Cov}[1]{\mathrm{Cov}\paren{#1}}
 \newcommand{\bbeta}{\boldsymbol{\beta}}
 \newcommand{\bbetahat}{\boldsymbol{\hat{\beta}}}
@@ -164,7 +155,7 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     \[\loocv{\alpha}:= \frac{1}{n}\sum_{i=1}^{n}\paren{\frac{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}{1-h_{ii,\alpha}}}^{2}\]
 \end{definition}
 
-\begin{lemma}[Shao, 1993]
+\begin{lemma}[Shao, 1993~\cite{shao_1993}]
     \[\loocv = \begin{cases}
         R_{n}(\alpha) + \sigma^{2} + \op{1} &\text{ if }\alpha\in\Acal_{w}\\[2mm]
         \frac{1}{n}\normsq{M_{\alpha}\e} + \frac{2}{n}\sigma^{2}p(\alpha) + \op{n^{-1}} &\text{ if }\alpha\in\Acal_{c}
@@ -202,7 +193,7 @@ In this section, we assume that \(p(\alpha):=p_n(\alpha)\) is constant for each 
     proving the second case.
 \end{proof}
 
-\begin{proposition}[Shao, 1993]
+\begin{proposition}[Shao, 1993~\cite{shao_1993}]
     Let \(\alphahat{(1)}\) be the model minimizing \(\loocv{\alpha}\).
     \begin{enumerate}
         \item Under H1, H2, and H3, \[\lim_{n\to\infty}\prob\paren{\alphahat{(1)}\in\Acal_{w}}=0.\]
@@ -236,7 +227,7 @@ A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1
     \[\frac{R_{n}(\alphahat{})}{R_{n}(\alpha^{*}_{n})}\to 1\quad\text{a.s.}\]
 \end{definition}
 
-\begin{proposition}[Shao, 1997]
+\begin{proposition}[Shao, 1997~\cite{shao_1997}]
     Suppose H1, \(p_{n}/n\to 0\), and that \(\Acal_{c}\) is non-empty for all but finitely many \(n\).
     \begin{enumerate}
         \item If \(|\Acal_{c}|=1\) for all but finitely many \(n\), then consistency is equivalent to efficiency in the sense of Definition 3.1
@@ -255,14 +246,14 @@ A subsequent result states that cross-validation is consistent if \(n_{v}/n\to 1
 
 \subsubsection{The case of \(\lambda_{n} \equiv 2\)}
 
-\begin{proposition}[Shao, 1997]\label{prop:97prop1}
+\begin{proposition}[Shao, 1997~\cite{shao_1997}]\label{prop:97prop1}
     Suppose that \(\lambda_{n}=2\) for all \(n\geq 1\) and that \(\sigmahat\) is a consistent estimator of \(\sigma^{2}\). Then,
     \[\Rhat{2}{\alpha} = \begin{cases}
         \textcolor{red}{TBD}
     \end{cases}\]
 \end{proposition}
 
-\begin{theorem}[Shao, 1997]\label{prop:97thm1}
+\begin{theorem}[Shao, 1997~\cite{shao_1997}]\label{prop:97thm1}
     Suppose that H4 holds and that \(\sigmahat\) is consistent for \(\sigma^{2}\). Then, \(\alphahat{2}_{n}\) is consistent and asymptotically loss efficient.
     \begin{enumerate}
         \item If \(|\Acal_{c}|\leq1\) for all but finitely many \(n\), then \(\alphahat{2}_{n}\) asymptotically loss efficient.
@@ -333,7 +324,7 @@ The propositions in this section rely on the following conditions:
     \item \textbf{C3:} There exists \(M_{n}\) such that \(\norm{f-\fhat{n}{j}}_{4} / \norm{f-\fhat{n}{j}}_{4} = \op{M_{n}}\) for \(j=1,2\).
 \end{itemize}
 
-\begin{theorem}[Yang, 2007]\label{prop:yangth1}
+\begin{theorem}[Yang, 2007~\cite{yang_2007}]\label{prop:yangth1}
     Suppose that \textbf{C0}--\textbf{C3} hold. Suppose, furthermore, that
     \begin{enumerate}
         \item \(n_{1}\to\infty\)
@@ -359,7 +350,7 @@ We then define our selection criterion as follows:
 \end{cases}\]
 where \(\Pi\) denotes the set of all permutations of \([n]\).
 
-\begin{theorem}[Yang, 2007]\label{prop:yangth2}
+\begin{theorem}[Yang, 2007~\cite{yang_2007}]\label{prop:yangth2}
     Under the conditions of Theorem 4.1 and the condition that the data is iid, the majority-vote cross-validation method is consistent.
 \end{theorem}
 
@@ -390,13 +381,43 @@ There are four aggregation schemes considered in Bunea et al.~\cite{bunea_2007},
 
 \subsubsection{Optimality criteria}
 
-In an ideal scenario, we would like to select the weights \(\lambdahat{}\) that satisfy 
-\[\lambda^{*} = \argmin_{\lambda\in\Lambda}\norm{f - \ftilde{lambda}}_{p}.\]
-for some norm \(\norm{\cdot}_{p}\). However, since the true regression function \(f\) is unknown, this approach is clearly not feasible. Instead, we consider the \emph{oracle inequality} \begin{equation}
-    \label{eq:oracleineq}
-    \E\norm{f - \ftilde{\lambdahat{}}}_{p} \leq \inf_{\lambda\in\Lambda}\norm{f - \ftilde{\lambda}}_{p} + \Delta_{n,M}.
-\end{equation}
-for some error term \(\Delta_{n,M}>0\) independent of \(f\).
+In an ideal scenario, we would like to select  weights \(\lambda^*\) satisying 
+\[\lambda^{*} = \argmin_{\lambda\in\Lambda}\Ep{d\paren{f, \ftilde{\lambda}}}\]
+for some distance function \(d\) (e.g., the \(L_{2}\) norm). However, since the true regression function \(f\) is unknown, this approach is clearly not feasible. Another way of evaluating the estimator is to consider its maximum risk on a class of functions \(\Theta\) containing \(f\), given by 
+\[\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambda}}_{2}.\]
+We would then attempt to find the \(\lambdahat{}\) that minimizes this quantity. However, once again, this is not an easy task, as \(\Theta\) may be too large or unknown. We also know that the expected risk goes to 0 as \(n\to \infty\). (\textcolor{red}{NOT SURE ABOUT THIS WHOLE PART})
+
+Instead, we consider an alternative approach using \emph{oracles.} 
+
+\begin{definition}[adapted from Tsybakov, 2009~\cite{tsybakov_introduction_2009}]
+    Suppose that there exists \(\lambda^{*}\in\Lambda\) such that 
+    \[\E\normsq{f-\ftilde{\lambda^{*}}}_{2} = \inf_{\lambda\in\Lambda}\E\normsq{f-\ftilde{\lambda^{*}}}_{2}.\]
+    The function \(f\mapsto \ftilde{\lambda^{*}}\) is called the oracle of aggregation under \(L_{2}\).
+
+    We say that the aggregate \(\ftilde{\lambdahat{}}\) \emph{mimics} the oracle if
+    \begin{equation}\label{eq:oracleineq}
+        \E\norm{f - \ftilde{\lambdahat{}}}_{2} \leq \inf_{\lambda\in\Lambda}\E\norm{f - \ftilde{\lambda}}_{2} + \Delta_{n,M}.
+    \end{equation}
+    for the smalles possible \(\Delta_{n,M}>0\) independent of \(f\).
+\end{definition}
+
+In what follows, the goal is to find lower bounds on \(\Delta_{n,M}\) for each of the aggregation schemes. We adapt Theorem 5.1 in~\cite{bunea_2007} to consider exclusively the \(L_{2}\) norm:
+
+\begin{definition}[Tsybakov, 2009~\cite{tsybakov_introduction_2009}]
+    For a class of functions \(\Theta\), a sequence \(\set{\psi_{n}}_{n\geq1}\) of positive numbers is called an \emph{optimal rate of convergence} of estimators \(\hat{f}\) on \(\Theta\) under \(L_{2}\) if there exist constants \(c, C>0\) such that
+    \begin{align}
+        &\limsup_{n\to\infty}\paren{\psi_{n}^{-2}\inf_{\hat{f}}\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}}_{2}^{2}}}\leq C\\
+        \text{and}\qquad&\liminf_{n\to\infty}\paren{\psi_{n}^{-2}\inf_{\hat{f}}\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}}_{2}^{2}}}\geq c
+    \end{align}
+    An estimator \(\hat{f}_{n}\) is said to be \emph{rate-optimal} if 
+    \[\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}_{n}}_{2}^{2}} \leq C'\psi_{n}^{2}\]
+    for some \(C'>0\). It is called \emph{asymptotically efficient} of \(\Theta\) under \(L_{2}\) if 
+    \[\lim_{n\to\infty}\frac{\sup_{f\in\Theta}\E{\normsq{f-\hat{f}_{n}}}}{\inf_{\hat{f}}\sup_{f\in\Theta}\E{\norm{f - \hat{f}}_{2}^{2}}}=1.\]
+\end{definition}
+
+\begin{theorem}[Bunea et al., 2007~\cite{bunea_2007}]\label{prop:buneath5.1}
+    TBD
+\end{theorem}
 
 \newpage
 \printbibliography{}
