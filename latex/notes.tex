@@ -318,14 +318,14 @@ The hold-out cross-validation method consists in selecting the estimator that mi
 \[L_{\mathrm{ho}}(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{i} - \fhat{n}{j}(\x_{i})}^{2}\quad\text{for }j=1,2.\]
 The propositions in this section rely on the following conditions:
 \begin{itemize}
-    \item \textbf{C0:} \(\Ep{\epsilon_{i}^{2}\mid \x_{i}}\) is bounded a.s.\ for \(i\in[n]\).
-    \item \textbf{C1:} There exists \(A_{n}\) such that \(\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\) for \(j=1,2\).
-    \item \textbf{C2:} One procedure is asymptotically better than the other.
-    \item \textbf{C3:} There exists \(M_{n}\) such that \(\norm{f-\fhat{n}{j}}_{4} / \norm{f-\fhat{n}{j}}_{4} = \op{M_{n}}\) for \(j=1,2\).
+    \item \textbf{A2.1:} \(\Ep{\epsilon_{i}^{2}\mid \x_{i}}\) is bounded a.s.\ for \(i\in[n]\).
+    \item \textbf{A2.2:} There exists \(A_{n}\) such that \(\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\) for \(j=1,2\).
+    \item \textbf{A2.3:} One procedure is asymptotically better than the other.
+    \item \textbf{A2.4:} There exists \(M_{n}\) such that \(\norm{f-\fhat{n}{j}}_{4} / \norm{f-\fhat{n}{j}}_{4} = \op{M_{n}}\) for \(j=1,2\).
 \end{itemize}
 
 \begin{theorem}[Yang, 2007~\cite{yang_2007}]\label{prop:yangth1}
-    Suppose that \textbf{C0}--\textbf{C3} hold. Suppose, furthermore, that
+    Suppose that \textbf{A2.1}--\textbf{A2.4} hold. Suppose, furthermore, that
     \begin{enumerate}
         \item \(n_{1}\to\infty\)
         \item \(n_{2}\to\infty\)
@@ -383,10 +383,11 @@ There are four aggregation schemes considered in Bunea et al.~\cite{bunea_2007},
 
 In an ideal scenario, we would like to select  weights \(\lambda^*\) satisying 
 \[\lambda^{*} = \argmin_{\lambda\in\Lambda}\Ep{d\paren{f, \ftilde{\lambda}}}\]
-for some distance function \(d\) (e.g., the \(L_{2}\) norm). However, since the true regression function \(f\) is unknown, this approach is clearly not feasible. Another way of evaluating the estimator is to consider its maximum risk on a class of functions \(\Theta\) containing \(f\), given by 
-\[\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambda}}_{2}.\]
-We would then attempt to find the \(\lambdahat{}\) that minimizes this quantity. However, once again, this is not an easy task, as \(\Theta\) may be too large or unknown. We also know that the expected risk goes to 0 as \(n\to \infty\).
-(\textcolor{red}{NOT SURE ABOUT THIS WHOLE PART})
+for some distance function \(d\) (e.g., the \(L_{2}\) norm). However, since the true regression function \(f\) is unknown, this approach is clearly not feasible. Another way of constructing an estimator is to minimize its maximum risk on a class of functions \(\Theta\) containing \(f\). That is, we would like to find \(\lambdahat{}\) satisfying 
+\[\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambdahat{}}}_{2} = \inf_{\lambda\in\Lambda}\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambda}}_{2}.\]
+This is known as \emph{minimax} extimation. 
+\marginpar{\footnotesize{not sure about this}}
+\textcolor{red}{However, once again, this is not an easy task, as \(\Theta\) may be too large or unknown. We also know that the expected risk goes to 0 as \(n\to \infty\).}
 
 Instead, we consider an alternative approach using \emph{oracles.} 
 
@@ -395,7 +396,7 @@ Instead, we consider an alternative approach using \emph{oracles.}
     \[\E\normsq{f-\ftilde{\lambda^{*}}}_{2} = \inf_{\lambda\in\Lambda}\E\normsq{f-\ftilde{\lambda^{*}}}_{2}.\]
     The function \(f\mapsto \ftilde{\lambda^{*}}\) is called the oracle of aggregation under \(L_{2}\).
 
-    We say that the aggregate \(\ftilde{\lambdahat{}}\) \emph{mimics} the oracle if
+    We say that the aggregate \(\ftilde{\lambdahat{}}\) {mimics} the oracle if
     \begin{equation}\label{eq:oracleineq}
         \E\norm{f - \ftilde{\lambdahat{}}}_{2} \leq \inf_{\lambda\in\Lambda}\E\norm{f - \ftilde{\lambda}}_{2} + \Delta_{n,M}.
     \end{equation}
@@ -410,14 +411,22 @@ In what follows, the goal is to find lower bounds on \(\Delta_{n,M}\) for each o
         &\limsup_{n\to\infty}\paren{\psi_{n}^{-2}\inf_{\hat{f}}\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}}_{2}^{2}}}\leq C\\
         \text{and}\qquad&\liminf_{n\to\infty}\paren{\psi_{n}^{-2}\inf_{\hat{f}}\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}}_{2}^{2}}}\geq c
     \end{align}
-    An estimator \(\hat{f}_{n}\) is said to be \emph{rate-optimal} if 
+    \textcolor{red}{An estimator \(\hat{f}_{n}\) is said to be \emph{rate-optimal} if 
     \[\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}_{n}}_{2}^{2}} \leq C'\psi_{n}^{2}\]
     for some \(C'>0\). It is called \emph{asymptotically efficient} of \(\Theta\) under \(L_{2}\) if 
-    \[\lim_{n\to\infty}\frac{\sup_{f\in\Theta}\E{\normsq{f-\hat{f}_{n}}}}{\inf_{\hat{f}}\sup_{f\in\Theta}\E{\norm{f - \hat{f}}_{2}^{2}}}=1.\]
+    \[\lim_{n\to\infty}\frac{\sup_{f\in\Theta}\E{\normsq{f-\hat{f}_{n}}}}{\inf_{\hat{f}}\sup_{f\in\Theta}\E{\norm{f - \hat{f}}_{2}^{2}}}=1.\]}
 \end{definition}
 
+%\begin{itemize}
+%    \item \textbf{A3.1:} The residuals \(\epsilon_i\) are iid \(\Ncal(0, \sigma^{2})\) for \(0<\sigma^2<\infty\)
+%    \item \textbf{A3.2:} There exists \(A_{n}\) such that \(\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\) for \(j=1,2\).
+%    \item \textbf{A3.3:} One procedure is asymptotically better than the other.
+%    \item \textbf{A3.4:} There exists \(M_{n}\) such that \(\norm{f-\fhat{n}{j}}_{4} / \norm{f-\fhat{n}{j}}_{4} = \op{M_{n}}\) for \(j=1,2\).
+%\end{itemize}
+
 \begin{theorem}[Bunea et al., 2007~\cite{bunea_2007}]\label{prop:buneath5.1}
-    TBD
+    \textcolor{red}{(Statement of lower bounds)}
+    \[\sup_{f_1, \ldots, f_2\in\mathcal{F}_{0}} \inf_{T_n}\sup_{f\in\mathcal{F}_0} \set{\E\normsq{f - T_n}_{2} - \min_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}_{2}} \geq c\psi_{n}\]
 \end{theorem}
 
 \newpage

@@ -27,6 +27,7 @@
 - Why are optimal rates squared?
 - Why is the oracle defined as a map?
 - What is the relationship between the oracle approach and a minimax rate-optimal estimator?
+- How relevant is testing number of splits (section 2.1.2)?
 
 
 
