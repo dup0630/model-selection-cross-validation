@@ -3,6 +3,8 @@
 ## To do
 - Fix simulation efficiency (switch to k-fold where appropriate, verify correctness)
 - Continue typing notes (fill in gaps in Shao papers, create next sections)
+- Fix assumptions enumeration.
+- I still don't understand how the size p_n(\alpha) of a model can change with n.
 
 ## Topics
 - Selection procedures:
