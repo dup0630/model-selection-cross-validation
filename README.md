@@ -13,23 +13,15 @@
     - Linear model selection, nonparametric procedures.
 
 ## Literature
-- Shao 1993
-    - Proofs
-- Shao 1997
+- Shao, 1993
+- Shao, 1997
     - Two Categories: LOO (similar to GIC-2) and delete-d (similar to GIC-$$\lambda_{n}$$)
     - Thm 1: Assymptotic efficiency of category 1
     - Thm 2: Assimptotic efficiency of category 2
-- Yang 2007
+- Yang, 2007
 - Bunea, Tsybakov 2007
-- Tsybakov
-    - Projection estimator
-    - Oracles
+- Tsybakov, 2009
 
 # Questions
 - Why are optimal rates squared?
 - Why is the oracle defined as a map?
-- What is the relationship between the oracle approach and a minimax rate-optimal estimator?
-- How relevant is testing number of splits (section 2.1.2)?
-
-
-
