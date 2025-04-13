@@ -1,4 +1,4 @@
-\documentclass[12pt, letter paper]{article}
+\documentclass[11pt, letter paper]{article}
 \usepackage{amsmath,amsthm,amsfonts,amssymb,geometry,fancyhdr,graphicx,xcolor}
 \usepackage{enumerate}
 \usepackage[style=authoryear, maxcitenames=1]{biblatex}
@@ -62,6 +62,7 @@
 \newcommand{\Tcal}{\mathcal{T}_{n}}
 \newcommand{\Ncal}{\mathcal{N}}
 \newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Fcal}{\mathcal{F}}
 \newcommand{\aseq}{\stackrel{\mathrm{a.s.}}{=}}
 \newcommand{\X}{\boldsymbol{X}}
 \newcommand{\x}{\boldsymbol{x}}
@@ -78,6 +79,7 @@
 \newcommand{\alphabar}{\bar{\alpha}}
 \newcommand{\lev}{h_{ii,\alpha}}
 \newcommand{\loocv}[1]{\hat{R}^{(1)}_{n}\paren{#1}}
+\newcommand{\ho}{\hat{L}_{\mathrm{ho}}}
 \newcommand{\op}[1]{o_{\prob}\paren{#1}}
 \newcommand{\Op}[1]{O_{\prob}\paren{#1}}
 \newcommand{\sigmahat}{\hat{\sigma}^{2}_{n}}
@@ -89,6 +91,7 @@
 \newcommand{\penBIC}[1]{\mathrm{pen}_{\mathrm{BIC}}\paren{#1}}
 \newcommand{\tr}[1]{\mathrm{tr}\paren{#1}}
 \newcommand{\ols}[1]{\paren{\X^{\top}_{#1}\X_{#1}}\X^{\top}_{#1}\y}
+\newcommand{\fho}{\hat{f}^{(\mathrm{ho})}_{n}}
 
 \title{MATH 410 Report: The Asymptotics of Cross-Validation and Aggregation in the Regression Setting}
 \author{Diego Urdapilleta de la Parra}
@@ -102,18 +105,35 @@
 
 The goal of this project is to study the asymptotic properties of cross-validation (CV) methods for model selection in a variety of scenarios.~\textcolor{red}{[(\ldots) motivation, brief description of CV methods, outline of the project.]}
 
-Throughout the paper, we consider the usual regression setup: Let \(n,p_{n}\) be positive integers and \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) be a set of independent data points drawn from a distribution \(\prob_{y, \x}\) for \((y, \x)\in\R\times \mathcal{X}\). We treat the \(\x_{i}\)'s as predictors of the outcome \(y_{i}\) via the relation
-\begin{equation}\label{eq:setup}
-    y_{i} = f(\x_{i}) + e_{i},\qquad i\in[n],
-\end{equation}
-where \(f\) is an unknown Borel-measurable function \(f:\mathcal{X}\to\R\) with \(f(\x_i)\aseq \Ep{y_i\mid \x_i}\) and the \(e_{i}\)'s are random variables satisfying \(\Ep{e_i\mid\x_{i}} = 0\).
-
 \subsection{The problem of model selection}
 \begin{itemize}
     \item Computational complexity
     \item Statistical efficiency
     \item Prediction performance
+    \item Assessing conditions
 \end{itemize}
+
+\subsection{Setup and notation}
+
+Throughout this report, we consider the following regression setup. For positive integers \(n\) and \(p_{n}\), let \((y, \x):\Omega\to\R\times[0,1]^{p_{n}}\) be a real-valued random vector with distribution \(\mu_{y, \x}\) such that \(\E{|y|^{2}}<\infty\), \(\E\normsq{\x}<\infty\), and \(\Ep{\x\x^{\top}}\succ 0\). A Borel-measurable function \(f:[0,1]^{p_{n}} \to \R\) that satisfies
+\begin{equation}\label{eq:setup}
+    f(\x) \aseq \Ep{y\mid \x}
+\end{equation}
+is called the \emph{regression} function of \(y\) on \(\x\).\footnote{Technically, it would be more accurate to refer to \emph{a version of} the regression function \(f\), since it is only unique in the almost-sure sense. In this report, however, we adopt the common convension of treating \(f\) as a single, well-defined function.}
+
+We are treat \(y\) as a response and \(\x\) as a covariate vector, and we would like to estimate the regression function \(f\) from sampled data. To this end, suppose that we have a sample \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) of independent data points drawn from the distribution \(\mu_{y, \x}\). We define the residual \(\epsilon_{i}:= y_{i} - f(\x_{i})\), which yields the decomposition
+\[y_{i} = f(\x_{i}) + \epsilon_{i}, \quad i\in[n].\]
+In general, we will assume that the second moment \(\Ep{\epsilon^{2}_{i}\mid\x}\) is bounded almost surely. We may also abuse notation by writing
+\[\y_{n} = f(\X_{n}) + \bepsilon_{n},\]
+where  \(\y_{n}\) is the vector of responses, \(\bepsilon_{n}\) is the vector of residuals, \(\X_{n} = [\x_{1}^{\top}\;\cdots\;\x_{n}^{\top}]^{\top}\) denotes the design matrix, and \(f(\X_{n}) = (f(\x_{1}),\ldots,f(\x_{n}))\).
+
+We will use the notation \(\norm{\cdot}\) to denote the Euclidean norm on \(\R^{n}\) (and, in some contexts, other finite-dimensional vector spaces on \(\R\)). At the same time, for \(q\geq 1\) and \(g\in L_{q}([0,1], \mathcal{B}[0,1], \mu_{\x})\), we write 
+\[\norm{g}_{q} := \begin{cases}
+    \paren{\int|g|^{q}\,d\mu_{\x}}^{1/q}&\text{if }1\leq q < \infty,\\[2mm]
+    \sup\set{c\in\R:\mu_{\x}\set{|f|>c}>0} &\text{if } q = \infty,
+\end{cases}\]
+where \(\mathcal{B}[0,1]\) denotes the Borel \(\sigma\)-field over \([0,1]\) and \(\mu_{\x}\) denotes the marginal distribution of \(\x\).
+
 
 \subsection{Cross-validation}
 
@@ -503,41 +523,43 @@ As in the case of Theorem~\ref{thm:97thm1}, the proof of Theorem~\ref{thm:97thm2
 \textcolor{red}{MISSING: Discussion.}
 
 
-\section{Selection of Nonparametric Regression Procedures}
+\section{Selection of Nonparametric Procedures}
 
 \subsection{Setup}
 
-Here we consider two regression procedures, denoted \(\delta_{1}\) and \(\delta_{2}\), that yield estimators \(\hat{f}_{n, 1}\) and \(\hat{f}_{n, 2}\) of the regression function stisfying
-\begin{equation}\label{eq:regressionmodel}
-    y_{i} = f(\x_{i}) + \epsilon_{i}\quad i\in[n],
-\end{equation}
-for \(\x_{i}\) iid, \(\Ep{\epsilon_{i}\mid \X} \aseq 0\) and \(\Ep{\epsilon_{i}^{2}\mid \X} \stackrel{\text{a.s.}}{<} \infty\).
+In statistical learning, we are oftentimes more interested in finding a practical means for prediction rather than a precise description of the data-generating mechanism. In these cases, where the goal is optimal predictive performance, the notion of a ``true'' or ``correct'' model becomes less meaningful. Indeed, for many kinds of nonparametric estimators, it is possible to establish inequalities of the form\footnote{Here, \(\norm{\cdot}_{2}\) denotes the \(L_{2}[0,1]\) norm given by \(\norm{f}_{2} = \paren{\int |f|^{2}\,d\lambda}^{1/2}\).}
+\[\sup_{f\in\Fcal}\E{\normsq{f - \hat{f}_{n}}} \leq C\psi_{n}^{2}\]
+for certain constants \(C\), positive sequences \(\psi_{n}\to 0\), and classes of functions \(\Fcal\) (see~\cite{tsybakov_introduction_2009}). These inequalities imply that the risk is guaranteed to approach 0 as n increases, and therefore, unlike in linear models, model specification is less of a concern (although the inclusion of relevant covariates remains relevant). 
+
+The problem of selecting a nonparametric estimator of the regression function, then, focuses more on the rates of convergence \(\psi_{n}\) of each procedure. In this section, we will consider the simplified scenario of selecting between 
+two regression procedures, denoted \(\delta_{1}\) and \(\delta_{2}\), that yield estimators \(\hat{f}_{n, 1}\) and \(\hat{f}_{n, 2}\) of the regression function \(f\).
 
 \begin{definition}
-    We say \(\delta_{1}\) is \emph{asymptotically better} than \(\delta_{2}\) under the loss function \(L\) if, for \(0<\varepsilon<1\), there exists \(c_{\varepsilon}>0\) such that
-    \[\prob\set{\Loss{\fhat{n}{2}}\geq (1+c_{\epsilon})\Loss{\fhat{n}{2}} }\geq 1-\varepsilon.\]
+    Let \(L_{n}\) be a loss function. We say \(\delta_{1}\) is \emph{asymptotically better} than \(\delta_{2}\) under \(L_{n}\) if, for \(0<\varepsilon<1\), there exists \(c_{\varepsilon}>0\) such that
+    \[\prob\set{\Loss{\fhat{n}{2}}\geq (1+c_{\epsilon})\Loss{\fhat{n}{2}} }\geq 1-\varepsilon\]
+    for all but finitely many \(n\).
 
     Given that \(\delta_{1}\) is asymptotically better than \(\delta_{2}\), we say that a selection procedure is consistent if it selects \(\delta_{1}\) with probability tending to 1 as \(n\to\infty\).
 \end{definition}
 
+In what follows, we will study the asymptotic performance of two variations on the cross-validation method for selecting an estimator. First, we will show that cross-validation with a single data split, also known as the \emph{hold-out}, is consistent in selection under some conditions on how the split is performed. Afterwards, we will show that this result extends to the multiple-split case with majority vote.
 
-\subsection{Single-split cross-validation (the Hold-out)}
+\subsection{Single-split cross-validation (the \emph{hold-out})}
 
-For this section, we assume that the first \(n_1\) elements in \(\data\) are used as a training/estimation sample and the remaining \(n_2\) elements make up the validation sample. We write \(p_{n}\) and \(q_{n}\) for the rates of convergence of the estimators \(\fhat{n}{1}\) and \(\fhat{n}{2}\), respectively. That is,
-\[\Op{p_{n}} = \norm{f - \fhat{n}{1}}_{2}\quad\text{and}\quad \Op{q_{n}} = \norm{f- \fhat{n}{2}}_{2}.\]
+For this section, we analyze a single-split approach where the first \(n_1\) elements in \(\data\) are used as a training/estimation sample and the remaining \(n_2\) elements make up the validation sample. We assume that the estimators \(\fhat{n}{1}\) and \(\fhat{n}{2}\) converge exactly at rates \(\set{p_{n}}_{n\geq 1}\) and \(\set{q_{n}}_{n\geq 1}\) under the \(L_{2}[0,1]\) loss, respectively. In other words, we assume that
+\[\norm{f, \fhat{n}{1}}_{2} = \Op{p_{n}} \quad\text{and}\quad \prob\set{\norm{f-\fhat{n}{1}} \geq c_{\varepsilon}p_{n}} \geq 1-\varepsilon\]
+for all \(\varepsilon\in(0,1)\) and for some \(c_{\varepsilon}>0\), and similarly for \(\fhat{n}{2}\) and \(q_[n]\).
 
-The hold-out cross-validation method consists in selecting the estimator that minimizes the hold-out loss
-\[L_{\mathrm{ho}}(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{i} - \fhat{n}{j}(\x_{i})}^{2}\quad\text{for }j=1,2.\]
-The propositions in this section rely on the following conditions:
-\begin{itemize}
-    \item \textbf{A3.1:} \(\Ep{\epsilon_{i}^{2}\mid \x_{i}}\) is bounded a.s.\ for \(i\in[n]\).
-    \item \textbf{A3.2:} There exists \(A_{n}\) such that \(\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\) for \(j=1,2\).
-    \item \textbf{A3.3:} One procedure is asymptotically better than the other.
-    \item \textbf{A3.4:} There exists \(M_{n}\) such that \(\norm{f-\fhat{n}{j}}_{4} / \norm{f-\fhat{n}{j}}_{4} = \op{M_{n}}\) for \(j=1,2\).
-\end{itemize}
+The hold-out loss estimator is defined by
+\[\ho(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{i} - \fhat{n_{1}}{j}(\x_{i})}^{2}\quad\text{for }j=1,2.\]
+The selection procedure consists in selecting the learning method \(\delta_{j}\) whose estimator \(\fhat{n}{j}\) minimizes \(\ho\) for \(j\in\set{1,2}\). We write \(\fho\) to denote the estimator selected by \(\ho\).
+
+To show the consistency of \(\ho\), we will establish a few assumptions. First, we will assume the existance of two positive sequences \(\set{A_{n}}_{n\geq1}\) and \(\set{M_{n}}_{n\geq1}\) such that 
+\[\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\quad\text{and}\quad\frac{\norm{f-\fhat{n}{j}}_{4}}{\norm{f-\fhat{n}{j}}_{2}} = \op{M_{n}}\]
+for \(j=1,2\). Additionally, we will assume that one of \(\delta_{1}\) and \(\delta_{2}\) is asymptotically better than the other. Indeed, if the latter is not satisfied, peu importe which one we choose.
 
 \begin{theorem}[\cite{yang_2007}]\label{prop:yangth1}
-    Suppose that \textbf{A3.1}--\textbf{A3.4} hold. Suppose, furthermore, that
+    Suppose that the conditions established above hold. Suppose, furthermore, that
     \begin{enumerate}
         \item \(n_{1}\to\infty\)
         \item \(n_{2}\to\infty\)
@@ -547,7 +569,7 @@ The propositions in this section rely on the following conditions:
     Then, the hold-out CV procedure is consistent.
 \end{theorem}
 
-A very detailed proof of this result is provided in~\textcite{yang_2007}, so it will be skipped here.
+A very detailed proof of this result is given in~\textcite{yang_2007}, so it will be skipped here.
 
 \subsection{Voting cross-validation with multiple splits}
 
