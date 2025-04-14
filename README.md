@@ -23,5 +23,5 @@
 - Tsybakov, 2009
 
 # Questions
-- Why are optimal rates squared?
-- Why is the oracle defined as a map?
+- Yang, p 17: typo?
+- Varying correct linear models.

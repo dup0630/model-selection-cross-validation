@@ -1,5 +1,6 @@
 \documentclass[11pt, letter paper]{article}
-\usepackage{amsmath,amsthm,amsfonts,amssymb,geometry,fancyhdr,graphicx,xcolor}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,fancyhdr,graphicx,xcolor}
+\usepackage{geometry}
 \usepackage{enumerate}
 \usepackage[style=authoryear, maxcitenames=1]{biblatex}
 %\usepackage{minted}
@@ -113,7 +114,7 @@ The goal of this project is to study the asymptotic properties of cross-validati
     \item Assessing conditions
 \end{itemize}
 
-\subsection{Setup and notation}
+\subsection{Setup and notation}\label{sec:setup}
 
 Throughout this report, we consider the following regression setup. For positive integers \(n\) and \(p_{n}\), let \((y, \x):\Omega\to\R\times[0,1]^{p_{n}}\) be a real-valued random vector with distribution \(\mu_{y, \x}\) such that \(\E{|y|^{2}}<\infty\), \(\E\normsq{\x}<\infty\), and \(\Ep{\x\x^{\top}}\succ 0\). A Borel-measurable function \(f:[0,1]^{p_{n}} \to \R\) that satisfies
 \begin{equation}\label{eq:setup}
@@ -137,8 +138,10 @@ where \(\mathcal{B}[0,1]\) denotes the Borel \(\sigma\)-field over \([0,1]\) and
 
 \subsection{Cross-validation}
 
+
+
 \newpage
-\section{Variable Selection for Linear Models}
+\section{Variable Selection for Linear Models}\label{sec:lm}
 \subsection{Setup}\label{sec:lmsetup}
 In this section, the regression function \(f\) in (\ref{eq:setup}) is assumed to be linear, so that the data is generated from a linear model of the form
 \[\y = \X\bbeta + \e\]
@@ -288,7 +291,6 @@ The converse of Lemma~\ref{lemm:implication} is not necessarily true. However, s
 \subsection{A result on the leave-one-out}\label{sec:loo}
 \renewcommand{\Acal}{\mathcal{A}}
 \renewcommand{\Tcal}{\mathcal{T}}
-\textcolor{red}{[Brief introduction to LOOCV and motivation]}
 
 Having established some essential results in the previous section, we now turn our attention to a particular variant of cross-validation, namely the leave-one-out. For this section, we will only consider the case where the set \(\Acal_{n}=:\Acal\) and all its elemets are constant across all \(n\geq 1\). That is, the candidate models are not changed by the number of observations.
 
@@ -456,7 +458,7 @@ Parts 2.\ and 3.\ specify conditions for asymptotic loss efficiency in when mult
 
 %Note that condition (\ref{eq:conditionQ}) is satisfied if \(\e\sim\Ncal(0_{n}, \sigma^{2}I_{n})\). Condition (\ref{eq:conditionP}) is satisfied if \(\Acal\) does not contain two correct models with fixed dimension for all but finitely many \(n\).
 
-Notice that these results resemble those presented in section~{\ref{sec:loo}} about the leave-one-out cross-validation estimator. Indeed, the correspondance between the leave-one-out and the GIC with \(lambda_{n}\equiv 2\) will be discussed in section~{\ref{sec:gicdisc}}.
+Notice that these results resemble those presented in section~{\ref{sec:loo}} about the leave-one-out cross-validation estimator. Indeed, the correspondance between the leave-one-out and the GIC with \(\lambda_{n}\equiv 2\) will be discussed in section~{\ref{sec:gicdisc}}.
 
 The proof of Theorem~\ref{thm:97thm1} uses the following decomposition, which we state without proof.
 
@@ -527,7 +529,8 @@ As in the case of Theorem~\ref{thm:97thm1}, the proof of Theorem~\ref{thm:97thm2
 
 \subsection{Setup}
 
-In statistical learning, we are oftentimes more interested in finding a practical means for prediction rather than a precise description of the data-generating mechanism. In these cases, where the goal is optimal predictive performance, the notion of a ``true'' or ``correct'' model becomes less meaningful. Indeed, for many kinds of nonparametric estimators, it is possible to establish inequalities of the form\footnote{Here, \(\norm{\cdot}_{2}\) denotes the \(L_{2}[0,1]\) norm given by \(\norm{f}_{2} = \paren{\int |f|^{2}\,d\lambda}^{1/2}\).}
+In statistical learning, we are oftentimes more interested in finding a practical means for prediction rather than a precise description of the data-generating mechanism. In these cases, where the goal is optimal predictive performance, the notion of a ``true'' or ``correct'' model becomes less meaningful. Indeed, for many kinds of nonparametric estimators, it is possible to establish inequalities of the form
+%\footnote{Here, \(\norm{\cdot}_{2}\) denotes the \(L_{2}[0,1]\) norm given by \(\norm{f}_{2} = \paren{\int |f|^{2}\,d\lambda}^{1/2}\).}
 \[\sup_{f\in\Fcal}\E{\normsq{f - \hat{f}_{n}}} \leq C\psi_{n}^{2}\]
 for certain constants \(C\), positive sequences \(\psi_{n}\to 0\), and classes of functions \(\Fcal\) (see~\cite{tsybakov_introduction_2009}). These inequalities imply that the risk is guaranteed to approach 0 as n increases, and therefore, unlike in linear models, model specification is less of a concern (although the inclusion of relevant covariates remains relevant). 
 
@@ -551,32 +554,50 @@ For this section, we analyze a single-split approach where the first \(n_1\) ele
 for all \(\varepsilon\in(0,1)\) and for some \(c_{\varepsilon}>0\), and similarly for \(\fhat{n}{2}\) and \(q_[n]\).
 
 The hold-out loss estimator is defined by
-\[\ho(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{i} - \fhat{n_{1}}{j}(\x_{i})}^{2}\quad\text{for }j=1,2.\]
+\begin{equation}\label{def:holoss}
+    \ho(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{i} - \fhat{n_{1}}{j}(\x_{i})}^{2}\quad\text{for }j=1,2.
+\end{equation}
 The selection procedure consists in selecting the learning method \(\delta_{j}\) whose estimator \(\fhat{n}{j}\) minimizes \(\ho\) for \(j\in\set{1,2}\). We write \(\fho\) to denote the estimator selected by \(\ho\).
 
 To show the consistency of \(\ho\), we will establish a few assumptions. First, we will assume the existance of two positive sequences \(\set{A_{n}}_{n\geq1}\) and \(\set{M_{n}}_{n\geq1}\) such that 
-\[\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\quad\text{and}\quad\frac{\norm{f-\fhat{n}{j}}_{4}}{\norm{f-\fhat{n}{j}}_{2}} = \op{M_{n}}\]
-for \(j=1,2\). Additionally, we will assume that one of \(\delta_{1}\) and \(\delta_{2}\) is asymptotically better than the other. Indeed, if the latter is not satisfied, peu importe which one we choose.
+\begin{equation}\label{eq:lpconditions}
+\norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\quad\text{and}\quad\frac{\norm{f-\fhat{n}{j}}_{4}}{\norm{f-\fhat{n}{j}}_{2}} = \op{M_{n}}
+\end{equation}
+for \(j=1,2\). These rates of convergence will be used in the proof of Theorem~\ref{thm:yangth1} below. Note that the supnorm contition in (\ref{eq:lpconditions}) is satisfied if the regression function \(f\) and the estimators \(\fhat{n}{j}\) are bounded.
 
-\begin{theorem}[\cite{yang_2007}]\label{prop:yangth1}
+In addition to the above, we will assume that one of \(\delta_{1}\) and \(\delta_{2}\) is asymptotically better than the other. Indeed, if the latter is not satisfied, choosing one over the other may be irrelevant.
+
+\begin{theorem}[\cite{yang_2007}]\label{thm:yangth1}
     Suppose that the conditions established above hold. Suppose, furthermore, that
     \begin{enumerate}
-        \item \(n_{1}\to\infty\)
-        \item \(n_{2}\to\infty\)
-        \item \(n_{2}M_{n}^{-4} \to \infty\)
-        \item \(\sqrt{n_{2}}\max(p_{n_{1}}, q_{n_{1}})\)
+        \item \(n_{1}\to\infty\) as \(n\to\infty\)
+        \item \(n_{2}\to\infty\) as \(n\to\infty\)
+        \item \(n_{2}M_{n_{1}}^{-4} \to \infty\) as \(n\to\infty\)
+        \item \(\sqrt{n_{2}}\max(p_{n_{1}}, q_{n_{1}})/\paren{1+A_{n_{1}}}\to\infty \) as \(n\to\infty\)
     \end{enumerate}
     Then, the hold-out CV procedure is consistent.
 \end{theorem}
 
-A very detailed proof of this result is given in~\textcite{yang_2007}, so it will be skipped here.
+A very detailed proof of this result is given in~\textcite{yang_2007}, so it will be skipped here. We illustrate the conditions of Theorem~\ref{thm:yangth1} via an ideal-scenario example.
+
+\begin{myproofbox}
+    \textbf{Example: } Suppose that \(\fhat{n}{1}\) and \(\fhat{n}{2}\) are two nonparametric estimators with rates of convergence \(p_{n}=O\paren{n^{-4/9}}\) and \(q_{n}=O\paren{n^{-1/3}}\), respectively. Suppose that (\ref{eq:lpconditions}) is satisfied with \(A_{n} = O(1)\) and \(M_{n}=O(1)\). If we choose splits such that \(n_{1}\to\infty\) and \(n_{2}\to\infty\) as \(n\to\infty\), then \(n_{2}M_{n_{1}}^{-4}\) is clearly satisfied and 
+    \[\frac{\sqrt{n_{2}}\max(p_{n_{1}}, q_{n_{1}})}{1+A_{n_{1}}} \geq \frac{n_{2}^{1/2}}{n_{1}^{1/3}}\to\infty \]
+    is satisfied if \(n_{1}=o\paren{n_{2}^{3/2}}\). In other words, it is possible for the estimation size \(n_{1}\) to be dominating.
+
+    On the other hand, if at least one of \(\fhat{n}{1}\) and \(\fhat{n}{2}\) has a parametric rate of convergence \(O(n^{-1/2})\), then
+    \[\sqrt{n_{2}}\max(p_{n_{1}},q_{n_{1}})\geq \paren{\frac{n_{2}}{n_{1}}}^{1/2}\to\infty\]
+    is satisfied whenever \(n_{2}/n_{1}\to\infty\). This agrees with the conclusion from Section~\ref{sec:lm}, in which we showed that cross-validation is often consistent if the validation size dominates.
+\end{myproofbox}
 
 \subsection{Voting cross-validation with multiple splits}
 
-The (theoretical) majority-vote cross-validation method proceeds as follows: for each permutation \(i\mapsto\pi(i)\) of the data, we compute the estimators \(\fhat{n_{1}}{1}\) and \(\fhat{n_{1}}{2}\) using the first \(n_{1}\) data points \((y_{\pi(1)}, \x_{\pi(1)}), \ldots,(y_{\pi(n_1)}, \x_{\pi(n_1)})\) as the training sample and the remaining \(n_{2}=n-n_{1}\) elements as the validation sample. We then find the estimator that minimizes the hold-out loss
-\[L_{\pi}(\fhat{n_{1}}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{\pi(i)} - \fhat{n_{1}}{j}\paren{\x_{\pi(i)}}}^{2}\qquad \text{for }j=1,2.\]
+The majority-vote cross-validation method proceeds as follows:\footnote{The procedure desctibed here is theoretical in nature. In practice, we would not compute the hold-outs for all permutations of the data.} for each permutation \(i\mapsto\pi(i)\) of the data, we compute the estimators \(\fhat{n_{1}}{1}\) and \(\fhat{n_{1}}{2}\) using the first \(n_{1}\) data points,
+\[E_{1} = \set{\paren{y_{\pi(1)}, \x_{\pi(1)}}, \ldots,\paren{y_{\pi(n_1)}, \x_{\pi(n_1)}}},\]
+as the training sample and the remaining \(n_{2}=n-n_{1}\) elements as the validation sample. We then find the estimator that minimizes the hold-out loss
+\[\hat{L}_{\pi}(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{\pi(i)} - \fhat{n_{1}}{j}\paren{\x_{\pi(i)}}}^{2}\qquad \text{for }j=1,2.\]
 The chosen estimator is the one favored by the majority of the permutations. More formally, we define 
-\[\tau_{\pi} = \ind{L_{\pi}(\fhat{n_{1}}{1}) \leq L_{\pi}(\fhat{n_{1}}{2})}\]
+\[\tau_{\pi} = \ind{\hat{L}_{\pi}(\fhat{n}{1}) \leq \hat{L}_{\pi}(\fhat{n}{2})}\]
 We then define our selection criterion as follows:
 \[\hat{f}_{n} = \begin{cases}
     \fhat{n}{1} &\text{if }\sum_{\pi\in\Pi}\tau_{\pi} \geq {n!}/{2},\\[2mm]
@@ -584,24 +605,43 @@ We then define our selection criterion as follows:
 \end{cases}\]
 where \(\Pi\) denotes the set of all permutations of \([n]\).
 
-\begin{theorem}[\cite{yang_2007}]\label{prop:yangth2}
-    Under the conditions of Theorem 4.1 and the condition that the data is iid, the majority-vote cross-validation method is consistent.
+\begin{theorem}[\cite{yang_2007}]\label{thm:yangth2}
+    Under the conditions of Theorem~\ref{thm:yangth1} and the condition that the data is iid, the majority-vote cross-validation method is consistent.
 \end{theorem}
 
 \begin{myproofbox}
     \textit{Proof: }
     Suppose that \(\delta_{1}\) is asymptotically better than \(\delta_{2}\). For \(\pi\in \Pi\), we have that
-    \[\prob\set{L_{\pi}\paren{\fhat{n_{1}}{1}} \leq L_{\pi}\paren{\fhat{n_{1}}{2}}} = \Ep{\tau_{\pi}} \stackrel{(*)}{=} \Ep{\frac{1}{n!}\sum_{\pi\in\Pi}\tau_{\pi}}.\]
-    The equality at \((*)\) follows from the fact that the data are iid, hence exchangeable, and thus the \(\tau_\pi\) are identically distributed. By Theorem~\ref{prop:yangth1}, the right-hand side converges to 1 as \(n\to\infty\). Since the average \(1/n! \sum_{\pi}\tau_{\pi}\) is almost surely at most 1, it follows that \(1/n! \sum_{\pi}\tau_{\pi} \to 1\) in probability, and the majority-vote cross-validation method is consistent.\qed{}
+    \[\prob\set{\hat{L}_{\pi}\paren{\fhat{n}{1}} \leq \hat{L}_{\pi}\paren{\fhat{n_{1}}{2}}} = \Ep{\tau_{\pi}} \stackrel{(*)}{=} \Ep{\frac{1}{n!}\sum_{\pi\in\Pi}\tau_{\pi}}.\]
+    The equality at \((*)\) follows from the fact that the data are iid, hence exchangeable, and thus the \(\tau_\pi\) are identically distributed. By Theorem~\ref{thm:yangth1}, the right-hand side converges to 1 as \(n\to\infty\). Since the average \(1/n! \sum_{\pi}\tau_{\pi}\) is almost surely at most 1, it follows that \(1/n! \sum_{\pi}\tau_{\pi} \to 1\) in probability, and the majority-vote cross-validation method is consistent.\qed{}
 \end{myproofbox}
 
-The proof of Theorem~\ref{prop:yangth2} does not require using the entire set \(\Pi\) of permutations for the majority vote. In fact, Theorem~\ref{prop:yangth1} establishes that even a single data split suffices for consistency, provided the splitting conditions are met. Moreover, \textcite{yang_2007} presents a counterexample demonstrating that these conditions are not merely sufficient but necessary, hence showing that the number of splits does not affect consistency. In other words, multiple splits in cross-validation cannot rescue an inconsistent single-split procedure. A natural question, then, is: if multiple splits do not improve consistency, what is their benefit? This will be explored in a simulation later on.
+The proof of Theorem~\ref{thm:yangth2} does not require using the entire set \(\Pi\) of permutations for the majority vote. In fact, Theorem~\ref{thm:yangth1} establishes that even a single data split suffices for consistency, provided the splitting conditions are met. Moreover, \textcite{yang_2007} presents a counterexample demonstrating that these conditions are not merely sufficient but necessary, hence showing that the number of splits does not affect consistency. In other words, multiple splits in cross-validation cannot rescue an inconsistent single-split procedure.
 
+%A natural question, then, is: if multiple splits do not improve consistency, what is their benefit? This will be explored in a simulation later on.
+
+\subsection{Concluding Remarks}
+
+The theoretical results presented in this chapter highlight important distinctions between cross-validation for parametric and nonparametric procedures. Unlike Shao's results for parametric model selection, where the validation set must asymptotically dominate the training set to achieve consistency, our analysis shows that for nonparametric procedures, the training set can be dominant provided certain convergence conditions are satisfied. This contrast emphasizes that the optimal splitting strategy depends critically on the nature of the procedures being compared.
+
+Cross-validation proves particularly useful for selection when comparing estimators with different convergence rates, as demonstrated in our theorems. The consistency of both single-split and majority-vote methods suggests that cross-validation can reliably identify asymptotically superior procedures under appropriate conditions on the \(L_{2}\), \(L_4\), and \(L_{\infty}\) norms of the estimation error. Not unlike the results in~\textcite{shao_1993}, however, the results in this section also indicate that leave-one-out cross-validation, where $n_1 = n-1$ and $n_2 = 1$, is generally inadequate for consistent selection since the validation size condition $n_2 \to \infty$ is violated.
+
+While this section focused the voting approach, it is worth noting that the more common averaging approach (described, for example, in~\ref{sec:cv}) should, in theory, retain more information from the data. From a consistency perspective, \textcite{yang_2007} hypothesizes that both approaches are likely to be equivalent: if a majority of the permutations favour \(\fhat{n}{1}\), say, with high probability, then it is also likely that the average \((1/n!)\sum_{\pi\in\Pi}\hat{L}_{\pi}(\fhat{n}{1})\) will be smaller than that of \(\fhat{n}{2}\).
+
+Several practical considerations emerge from this analysis, including the optimal choice of splitting ratios and the relative merits of k-fold procedures versus single splits. While our theoretical framework provides guidance on asymptotic properties, the finite-sample performance of these methods under various conditions remains an important question. These practical aspects, along with empirical comparisons between different cross-validation variants, will be addressed through simulation studies in a subsequent chapter.~\ref{sec:simulations}
 
 
 \section{Aggregation}
 
-As before, we consider independent pairs in \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) satisfying (\ref{eq:regressionmodel}). Suppose that we have \(M\) candidate estimators of the regression function, denoted \(\fhat{n}{1}, \fhat{n}{2}, \ldots, \fhat{n}{M}\). Instead of selecting a single estimator, we combine them into an \emph{aggregate} \(\ftilde{\lambdahat{}}\) given by
+It is no hard to see that the practice of model selection has some limitations and disadvantages. Without any means of verifying underlying hypotheses (say, linearity of \(f\) for linear models, or its membership to a Soblovev class for projection estimators), we have no guarantee that a single selected estimator will satisfy a desired performance. Moreover, model selection may arise challenges related to stability and overfitting, and may not even be helpful if the models being considered are hard to distinguish or if no clear winner exists among them. 
+
+With this in mind, and if interpretability is not our main concern, we may instead opt to combine or \emph{aggregate} our candidate models to obtain a more robust and potentially better-performing estimator. Aggregation of multiple estimators consists in combining them via a weighted average. In fact, as will be shown below, model selection can be seen a special case of this broader framework, where the computed ``weighted average'' has weights equal to 0 for all but one candidate model. 
+
+This section explores some perspectives through which aggregation schemes can be analyzed and presents asymptotic results on a particular aggregate estimator drawn from \textcite{bunea_2007}.
+
+\subsection{Setup}
+
+As before, we consider independent pairs in \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) satisfying the conditions established in Section~\ref{sec:setup}. Suppose that we have \(M\) candidate estimators of the regression function, denoted \(\fhat{n}{1}, \fhat{n}{2}, \ldots, \fhat{n}{M}\). Instead of selecting a single estimator, we combine them into an \emph{aggregate} \(\ftilde{\lambdahat{}}\) given by
 \[\ftilde{\lambdahat{}} = \sum_{j=1}^{M}\lambdahat{j} \fhat{n}{j},\]
 with \(\lambdahat{}:=\paren{\lambdahat{1}, \ldots, \lambdahat{M}}\in \Lambda\subset\R^{M}\) chosen to satisfy
 \begin{equation}\label{eq:weights}
@@ -609,9 +649,9 @@ with \(\lambdahat{}:=\paren{\lambdahat{1}, \ldots, \lambdahat{M}}\in \Lambda\sub
 \end{equation}
 for some penalty \(\mathrm{pen}(\lambda)\) on the coefficients.
 
-\subsection{Four types of aggregation}
+\subsubsection{Four types of aggregation}
 
-There are four aggregation schemes considered in~\textcite{bunea_2007}, each of which is characterized by a different set \(\Lambda\) of admissible weights \(\lambdahat{}\):
+We will consider four aggregation schemes as presented in~\textcite{bunea_2007}, each of which is characterized by a different set \(\Lambda\) of admissible weights \(\lambdahat{}\):
 \begin{itemize}
     \item Model Selection Aggregation (MS): A single estimator is selected. That is,\[\Lambda_{\mathrm{MS}} = \set{\lambda\in\R^{M}:\lambda = \boldsymbol{e}_{j}\text{ for some }j\in[M]}.\]
     \item Linear Aggregation (L): \(\ftilde{\lambdahat{}}\) is chosen among all linear combinations of the estimators. That is, \[\Lambda_{\mathrm{L}} = \R^{M}.\]
@@ -619,7 +659,7 @@ There are four aggregation schemes considered in~\textcite{bunea_2007}, each of 
     \item Subset Selection (S): We select and aggregate at most \(D\) estimators from the pool, for a given \(D\leq M\). That is, \[\Lambda_{\mathrm{S}} = \set{\lambda\in\R^{M}:\lambda\text{ has at most \(D\) non-zero entries}}.\]
 \end{itemize}
 
-\subsection{Evaluating the aggregate}
+\subsubsection{Evaluating the aggregate}
 
 In an ideal scenario, we would like to select  weights \(\lambda^*\) satisying 
 \[\lambda^{*} = \argmin_{\lambda\in\Lambda}\Ep{d\paren{f, \ftilde{\lambda}}}\]
