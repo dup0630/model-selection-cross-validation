@@ -25,3 +25,4 @@
 # Questions
 - Yang, p 17: typo?
 - Varying correct linear models.
+- Bunea, Tsybakov: Tn over all estimators?

@@ -620,7 +620,7 @@ The proof of Theorem~\ref{thm:yangth2} does not require using the entire set \(\
 
 %A natural question, then, is: if multiple splits do not improve consistency, what is their benefit? This will be explored in a simulation later on.
 
-\subsection{Concluding Remarks}
+\subsection{Some remarks}
 
 The theoretical results presented in this chapter highlight important distinctions between cross-validation for parametric and nonparametric procedures. Unlike Shao's results for parametric model selection, where the validation set must asymptotically dominate the training set to achieve consistency, our analysis shows that for nonparametric procedures, the training set can be dominant provided certain convergence conditions are satisfied. This contrast emphasizes that the optimal splitting strategy depends critically on the nature of the procedures being compared.
 
@@ -633,72 +633,68 @@ Several practical considerations emerge from this analysis, including the optima
 
 \section{Aggregation}
 
-It is no hard to see that the practice of model selection has some limitations and disadvantages. Without any means of verifying underlying hypotheses (say, linearity of \(f\) for linear models, or its membership to a Soblovev class for projection estimators), we have no guarantee that a single selected estimator will satisfy a desired performance. Moreover, model selection may arise challenges related to stability and overfitting, and may not even be helpful if the models being considered are hard to distinguish or if no clear winner exists among them. 
+As is generally the case in statistics, the need for model selection stems from an uncertainty or lack of knowledge about the system being studied. And while selection procedures may give us improved confidence on our estimation endeavours, it certainly will not cure our ignorance. For instance, without any means of verifying underlying hypotheses (say, linearity of \(f\) for linear models, or its membership to a Soblovev class for projection estimators), we have no guarantee that a single selected procedure will reliably yield good predictions. Moreover, selection may not even be helpful if the models being considered are hard to distinguish or if no clear winner exists among them. 
 
-With this in mind, and if interpretability is not our main concern, we may instead opt to combine or \emph{aggregate} our candidate models to obtain a more robust and potentially better-performing estimator. Aggregation of multiple estimators consists in combining them via a weighted average. In fact, as will be shown below, model selection can be seen a special case of this broader framework, where the computed ``weighted average'' has weights equal to 0 for all but one candidate model. 
+Rather than committing to a single estimator, an alternative way of coping with our lack of knowledge is to combine or \emph{aggregate} our candidate models. This way, we obtain a more robust and potentially better-performing estimator. Aggregation of multiple estimators consists in combining them via a weighted average. In fact, as will be shown below, model selection can be seen a special case of this broader framework, where the computed ``weighted average'' has weights equal to 0 for all but one candidate model. 
 
 This section explores some perspectives through which aggregation schemes can be analyzed and presents asymptotic results on a particular aggregate estimator drawn from \textcite{bunea_2007}.
 
 \subsection{Setup}
 
-As before, we consider independent pairs in \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) satisfying the conditions established in Section~\ref{sec:setup}. Suppose that we have \(M\) candidate estimators of the regression function, denoted \(\fhat{n}{1}, \fhat{n}{2}, \ldots, \fhat{n}{M}\). Instead of selecting a single estimator, we combine them into an \emph{aggregate} \(\ftilde{\lambdahat{}}\) given by
+As before, we consider independent pairs in \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) satisfying the conditions established in Section~\ref{sec:setup}. Suppose that we have \(M\) candidate estimators of the regression function, denoted \(\fhat{n}{1}, \fhat{n}{2}, \ldots, \fhat{n}{M}\). Given a set \(\Lambda\subset\R^{M}\) of admissible weights, we combine the estimators into an \emph{aggregate} \(\ftilde{\lambdahat{}}\) given by
 \[\ftilde{\lambdahat{}} = \sum_{j=1}^{M}\lambdahat{j} \fhat{n}{j},\]
-with \(\lambdahat{}:=\paren{\lambdahat{1}, \ldots, \lambdahat{M}}\in \Lambda\subset\R^{M}\) chosen to satisfy
-\begin{equation}\label{eq:weights}
-    \lambdahat{} = \argmin_{\lambda\in\Lambda}\set{\frac{1}{n}\normsq{y - f_{\lambda}(\x)} - \mathrm{pen}(\lambda)}
-\end{equation}
-for some penalty \(\mathrm{pen}(\lambda)\) on the coefficients.
+with \(\lambdahat{}:=\paren{\lambdahat{1}, \ldots, \lambdahat{M}}\in \Lambda\) chosen to satisfy some optimality criteria.
 
-\subsubsection{Four types of aggregation}
+\subsubsection{Four types of aggregation}\label{sec:buneaschemes}
 
-We will consider four aggregation schemes as presented in~\textcite{bunea_2007}, each of which is characterized by a different set \(\Lambda\) of admissible weights \(\lambdahat{}\):
+There are four main aggregation schemes that are treated in the literature. Each scheme is characterized by a different set \(\Lambda\) of admissible weights, and they are all suitable for distinct use cases. The schemes are:
 \begin{itemize}
-    \item Model Selection Aggregation (MS): A single estimator is selected. That is,\[\Lambda_{\mathrm{MS}} = \set{\lambda\in\R^{M}:\lambda = \boldsymbol{e}_{j}\text{ for some }j\in[M]}.\]
-    \item Linear Aggregation (L): \(\ftilde{\lambdahat{}}\) is chosen among all linear combinations of the estimators. That is, \[\Lambda_{\mathrm{L}} = \R^{M}.\]
-    \item Convex Aggregation (C): \(\ftilde{\lambdahat{}}\) is chosen among all convex combinations of the estimators. That is, \[\Lambda_{\mathrm{C}} = \set{\lambda\in\R^{M}:\lambda\geq 0, \sum_{j=1}^{M}\lambda_{j} = 1}.\]
-    \item Subset Selection (S): We select and aggregate at most \(D\) estimators from the pool, for a given \(D\leq M\). That is, \[\Lambda_{\mathrm{S}} = \set{\lambda\in\R^{M}:\lambda\text{ has at most \(D\) non-zero entries}}.\]
+    \item Model Selection Aggregation (MS): Only one estimator is selected among the candidates. We take \(\Lambda_{\mathrm{MS}}\) to be the standard basis on \(\R^{M}\).
+    \item Linear Aggregation (L): The aggregate \(\ftilde{\lambdahat{}}\) is chosen among all linear combinations of the estimators. We let \(\Lambda_{\mathrm{L}} = \R^{M}\).
+    \item Convex Aggregation (C): The aggregate \(\ftilde{\lambdahat{}}\) is chosen among all convex combinations of the estimators. That is, \[\Lambda_{\mathrm{C}} = \set{\lambda\in\R^{M}:\lambda\geq 0, \sum_{j=1}^{M}\lambda_{j} = 1}.\]
+    \item Subset Selection (S): Given a positive integer \(D\leq M\), at most \(D\) estimators from the candidates are selected and combined. That is, \[\Lambda_{\mathrm{S}} = \set{\lambda\in\R^{M}:\lambda\text{ has at most \(D\) non-zero entries}}.\]
+    To denote the number of nonzero entries in a vector \(\lambda\), we may use the notations \(D(\lambda)\) and \(\norm{\lambda}_{0}\) interchangeably.
 \end{itemize}
+
+Notably, mentioned before, model selection can be viewed from this framework as a particular type of aggregation. Each of this schemes may perform differently on different tasks, and 
 
 \subsubsection{Evaluating the aggregate}
 
-In an ideal scenario, we would like to select  weights \(\lambda^*\) satisying 
-\[\lambda^{*} = \argmin_{\lambda\in\Lambda}\Ep{d\paren{f, \ftilde{\lambda}}}\]
-for some distance function \(d\) (e.g., the \(L_{2}\) norm). However, since the true regression function \(f\) is unknown, this approach is clearly not feasible. Another way of constructing an estimator is to minimize its maximum risk on a class of functions \(\Theta\) containing \(f\). That is, we would like to find \(\lambdahat{}\) satisfying 
-\[\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambdahat{}}}_{2} = \inf_{\lambda\in\Lambda}\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambda}}_{2}.\]
+In an ideal scenario, we would like to select a weights vector \(\lambda^*\) that minimizes the largest possible expected error on a class of functions \(\Fcal\) containing \(f\). That is, we would like to find \(\lambda^*\) satisfying 
+\begin{equation}\label{eq:minimax}
+    \sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambda^*}}_{2} = \inf_{\lambda\in\Lambda}\sup_{f\in\Theta}\E\normsq{f-\ftilde{\lambda}}_{2}.
+\end{equation}
 This is known as \emph{minimax} extimation. 
-However, once again, there is no obvious way to compute the expectation \(\E\normsq{f-\ftilde{\lambdahat{}}}_{2}\) for an arbitrary \(f\in\Theta\).
+However, there is no obvious way to compute the expectation \(\E\normsq{f-\ftilde{\lambdahat{}}}_{2}\) for an arbitrary \(f\in\Theta\), and so the minimax approach is not feasible in practice. The next best thing, then, would be to obtain weights \(\lambdahat{}\) that perform at least as good as \(\lambda^*\) in (\ref{eq:minimax}) plus some small, ideally vanishing remainder \(\Delta_{n,M}\). That is, we seek \(\lambdahat{}\) such that
+\begin{equation}\label{eq:oracleineq}
+    \E\norm{f - \ftilde{\lambdahat{}}}_{2} \leq \inf_{\lambda\in\Lambda}\E\norm{f - \ftilde{\lambda}}_{2} + \Delta_{n,M},
+\end{equation}
+regardless of what \(f\) is. With this approach in mind, we now introduce the notion of an \emph{oracle}.
 
-For these reasons, we instead adopt the least-squares approach in (\ref{eq:weights}). But how can we know if this approach is any good? We need a tool to evaluate the performance of our aggregate against \emph{any} possible of regression function \(f\). Oracles provide us with such a tool. 
-
-\begin{definition}[adapted from~\cite{tsybakov_introduction_2009}]
+\begin{definition}[adapted from~\cite{tsybakov_introduction_2009}]\label{def:oracle}
     Suppose that there exists \(\lambda^{*}\in\Lambda\) such that 
-    \[\E\normsq{f-\ftilde{\lambda^{*}}}_{2} = \inf_{\lambda\in\Lambda}\E\normsq{f-\ftilde{\lambda^{*}}}_{2}.\]
-    The function \(f\mapsto \ftilde{\lambda^{*}}\) is called the oracle of aggregation under \(L_{2}\).
+    \[\E\normsq{f-\ftilde{\lambda^{*}}}_{2} = \inf_{\lambda\in\Lambda}\E\normsq{f-\ftilde{\lambda}}_{2}.\]
+    The function \(f\mapsto \ftilde{\lambda^{*}}\) is called the oracle of aggregation under the \(L_{2}\) norm.
 
-    We say that the aggregate \(\ftilde{\lambdahat{}}\) {mimics} the oracle if
-    \begin{equation}\label{eq:oracleineq}
-        \E\norm{f - \ftilde{\lambdahat{}}}_{2} \leq \inf_{\lambda\in\Lambda}\E\norm{f - \ftilde{\lambda}}_{2} + \Delta_{n,M}.
-    \end{equation}
-    for the smalles possible \(\Delta_{n,M}>0\) independent of \(f\).
+    The inequality at (\ref{eq:oracleineq}) is called an oracle inequality, and we say that the aggregate \(\ftilde{\lambdahat{}}\) {mimics} the oracle if (\ref{eq:oracleineq}) is satisfied for the smallest possible \(\Delta_{n,M}>0\) independent of \(f\).
 \end{definition}
 
-In what follows, the goal is to find lower bounds on \(\Delta_{n,M}\) for each of the aggregation schemes. 
+As is suggested in the latter definition, the remainder \(\Delta_{n,M}\), also known as the \emph{rate of convergence} of \(\ftilde{\lambdahat{}}\), is central to the evaluation of an aggregate's suitability. Both lower and upper bounds on these rates of convergence can be theoretically found for each of the above-mentioned schemes, and these bounds can guide us towards optimal choices of \(\lambdahat{}\). The lower bounds will be particularly useful since, from Definition~\ref{def:oracle}, we are mainly interested in the smallest possible rate \(\delta_{n,M}\)
 
 \begin{definition}[\cite{tsybakov_introduction_2009}]
-    For a class of functions \(\Theta\), a sequence \(\set{\psi_{n}}_{n\geq1}\) of positive numbers is called an \emph{optimal rate of convergence} of estimators \(\hat{f}\) on \(\Theta\) under \(L_{2}\) if there exist constants \(c, C>0\) such that
-    \begin{align}
-        &\limsup_{n\to\infty}\paren{\psi_{n}^{-2}\inf_{\hat{f}}\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}}_{2}^{2}}}\leq C\\
-        \text{and}\qquad&\liminf_{n\to\infty}\paren{\psi_{n}^{-2}\inf_{\hat{f}}\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}}_{2}^{2}}}\geq c
-    \end{align}
-    \textcolor{red}{An estimator \(\hat{f}_{n}\) is said to be \emph{rate-optimal} if 
-    \[\sup_{f\in\Theta}\Ep{\norm{f - \hat{f}_{n}}_{2}^{2}} \leq C'\psi_{n}^{2}\]
-    for some \(C'>0\). It is called \emph{asymptotically efficient} of \(\Theta\) under \(L_{2}\) if 
-    \[\lim_{n\to\infty}\frac{\sup_{f\in\Theta}\E{\normsq{f-\hat{f}_{n}}}}{\inf_{\hat{f}}\sup_{f\in\Theta}\E{\norm{f - \hat{f}}_{2}^{2}}}=1.\]}
+    Let \(\Lambda\subset\R^{M}\) be a set of admissible weights and let \(\Fcal\) and \(\Fcal'\) be classes of Borel-measurable functions on \([0,1]\) with \({\{\ftilde{\lambda}\}}_{\lambda\in\Lambda}\subset\Fcal'\). A sequence \(\set{\psi_{n}}_{n\geq1}\) of positive numbers is called an optimal rate of convergence if there exist constants \(c, C>0\) such that, for any \(n\geq 1\), 
+    \begin{equation}\label{eq:orcupper}
+        \sup_{f\in\Fcal}\paren{\E\normsq{f-\ftilde{}}_{2} - \inf_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}_{2}}\leq C\psi_{n}
+    \end{equation}
+    for some aggregate estimator \(\ftilde{}\) of \(f\), and 
+    \begin{equation}\label{eq:orclower}
+        \sup_{f\in\Fcal}\paren{\E\normsq{f - T_{n}} - \inf_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}}\geq c\psi_{n}     
+    \end{equation}
+    for any data-dependent estimator \(T_{n}\) of \(f\).
 \end{definition}
 
-We adapt Theorem 5.1 in~\textcite{bunea_2007} to consider exclusively the \(L_{2}\) norm:
-
 \begin{theorem}[\cite{bunea_2007}]\label{prop:buneath5.1}
+    For \(\Lambda_{\mathrm{MS}}\), \(\Lambda_{\mathrm{L}}\), \(\Lambda_{\mathrm{C}}\), and \(\Lambda_{\mathrm{S}}\) as defined in Section~\ref{sec:buneaschemes}, 
     \textcolor{red}{(Statement of lower bounds)}
     \[\sup_{f_1, \ldots, f_2\in\mathcal{F}_{0}} \inf_{T_n}\sup_{f\in\mathcal{F}_0} \set{\E\normsq{f - T_n}_{2} - \min_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}_{2}} \geq c\psi_{n}\]
     \textcolor{red}{INCOMPLETE SECTION}
