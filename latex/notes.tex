@@ -2,7 +2,7 @@
 \usepackage{amsmath,amsthm,amsfonts,amssymb,fancyhdr,graphicx,xcolor}
 \usepackage{geometry}
 \usepackage{enumerate}
-\usepackage[style=authoryear, maxcitenames=1]{biblatex}
+\usepackage[style=authoryear, maxcitenames=1, dashed=false]{biblatex}
 %\usepackage{minted}
 \usepackage[most]{tcolorbox}
 
@@ -67,6 +67,7 @@
 \newcommand{\aseq}{\stackrel{\mathrm{a.s.}}{=}}
 \newcommand{\X}{\boldsymbol{X}}
 \newcommand{\x}{\boldsymbol{x}}
+\newcommand{\z}{\boldsymbol{z}}
 \newcommand{\y}{\boldsymbol{y}}
 \newcommand{\e}{\boldsymbol{e}}
 \newcommand{\Cov}[1]{\mathrm{Cov}\paren{#1}}
@@ -645,6 +646,18 @@ As before, we consider independent pairs in \(\data := \set{\paren{y_{i}, \x_{i}
 \[\ftilde{\lambdahat{}} = \sum_{j=1}^{M}\lambdahat{j} \fhat{n}{j},\]
 with \(\lambdahat{}:=\paren{\lambdahat{1}, \ldots, \lambdahat{M}}\in \Lambda\) chosen to satisfy some optimality criteria.
 
+We establish the following assumptions for this section.
+
+\begin{quotation}
+    \noindent\textbf{H4.1:}\quad The residuals \(\epsilon_{i}\) have a normal distribution \(\Ncal(0, \sigma^{2})\) for \(\sigma^{2}<\infty\).
+    
+    \vspace{3mm}
+    
+    \noindent\textbf{H4.2:}\quad The regression funcion \(f\) and the base estimators \(\fhat{n}{1}, \fhat{n}{2}, \ldots, \fhat{n}{M}\) belong to the space \(L_{\infty}([0,1], \mu_{\x})\).
+\end{quotation}
+
+Both assumptions grant well-behaved estimators and allow for the application of certain minimax results relating, in particular, to the Kullback-Liebler divergence between the distributions of estimators in the class \(\Fcal_{0}\).
+
 \subsubsection{Four types of aggregation}\label{sec:buneaschemes}
 
 There are four main aggregation schemes that are treated in the literature. Each scheme is characterized by a different set \(\Lambda\) of admissible weights, and they are all suitable for distinct use cases. The schemes are:
@@ -653,7 +666,7 @@ There are four main aggregation schemes that are treated in the literature. Each
     \item Linear Aggregation (L): The aggregate \(\ftilde{\lambdahat{}}\) is chosen among all linear combinations of the estimators. We let \(\Lambda_{\mathrm{L}} = \R^{M}\).
     \item Convex Aggregation (C): The aggregate \(\ftilde{\lambdahat{}}\) is chosen among all convex combinations of the estimators. That is, \[\Lambda_{\mathrm{C}} = \set{\lambda\in\R^{M}:\lambda\geq 0, \sum_{j=1}^{M}\lambda_{j} = 1}.\]
     \item Subset Selection (S): Given a positive integer \(D\leq M\), at most \(D\) estimators from the candidates are selected and combined. That is, \[\Lambda_{\mathrm{S}} = \set{\lambda\in\R^{M}:\lambda\text{ has at most \(D\) non-zero entries}}.\]
-    To denote the number of nonzero entries in a vector \(\lambda\), we may use the notations \(D(\lambda)\) and \(\norm{\lambda}_{0}\) interchangeably.
+    To denote the number of nonzero entries in a vector \(\lambda\), we may use the notations \(M(\lambda)\) and \(\norm{\lambda}_{0}\) interchangeably.
 \end{itemize}
 
 Notably, mentioned before, model selection can be viewed from this framework as a particular type of aggregation. Each of this schemes may perform differently on different tasks, and 
@@ -676,69 +689,152 @@ regardless of what \(f\) is. With this approach in mind, we now introduce the no
     \[\E\normsq{f-\ftilde{\lambda^{*}}}_{2} = \inf_{\lambda\in\Lambda}\E\normsq{f-\ftilde{\lambda}}_{2}.\]
     The function \(f\mapsto \ftilde{\lambda^{*}}\) is called the oracle of aggregation under the \(L_{2}\) norm.
 
-    The inequality at (\ref{eq:oracleineq}) is called an oracle inequality, and we say that the aggregate \(\ftilde{\lambdahat{}}\) {mimics} the oracle if (\ref{eq:oracleineq}) is satisfied for the smallest possible \(\Delta_{n,M}>0\) independent of \(f\).
+    The inequality at (\ref{eq:oracleineq}) is called an oracle inequality, and we say that the aggregate \(\ftilde{\lambdahat{}}\) mimics (or is adaptive to) the oracle if (\ref{eq:oracleineq}) is satisfied for the smallest possible \(\Delta_{n,M}>0\) independent of \(f\).
 \end{definition}
 
 As is suggested in the latter definition, the remainder \(\Delta_{n,M}\), also known as the \emph{rate of convergence} of \(\ftilde{\lambdahat{}}\), is central to the evaluation of an aggregate's suitability. Both lower and upper bounds on these rates of convergence can be theoretically found for each of the above-mentioned schemes, and these bounds can guide us towards optimal choices of \(\lambdahat{}\). The lower bounds will be particularly useful since, from Definition~\ref{def:oracle}, we are mainly interested in the smallest possible rate \(\delta_{n,M}\)
 
 \begin{definition}[\cite{tsybakov_introduction_2009}]
-    Let \(\Lambda\subset\R^{M}\) be a set of admissible weights and let \(\Fcal\) and \(\Fcal'\) be classes of Borel-measurable functions on \([0,1]\) with \({\{\ftilde{\lambda}\}}_{\lambda\in\Lambda}\subset\Fcal'\). A sequence \(\set{\psi_{n}}_{n\geq1}\) of positive numbers is called an optimal rate of convergence if there exist constants \(c, C>0\) such that, for any \(n\geq 1\), 
+    Let \(\Lambda\subset\R^{M}\) be a set of admissible weights and let \(\Fcal\) and \(\Fcal'\) be classes of Borel-measurable functions on \([0,1]\) with \({\{\ftilde{\lambda}\}}_{\lambda\in\Lambda}\subset\Fcal'\). A sequence \(\set{\psi_{n,M}}_{n,M\geq1}\) of positive numbers is called an optimal rate of convergence if there exist constants \(c, C>0\) such that, for any \(n\geq 1\), 
     \begin{equation}\label{eq:orcupper}
-        \sup_{f\in\Fcal}\paren{\E\normsq{f-\ftilde{}}_{2} - \inf_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}_{2}}\leq C\psi_{n}
+        \sup_{f\in\Fcal}\paren{\E\normsq{f-\ftilde{}}_{2} - \inf_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}_{2}}\leq C\psi_{n,M}
     \end{equation}
     for some aggregate estimator \(\ftilde{}\) of \(f\), and 
     \begin{equation}\label{eq:orclower}
-        \sup_{f\in\Fcal}\paren{\E\normsq{f - T_{n}} - \inf_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}}\geq c\psi_{n}     
+        \sup_{f\in\Fcal}\paren{\E\normsq{f - T_{n}} - \inf_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}}\geq c\psi_{n,M}     
     \end{equation}
     for any data-dependent estimator \(T_{n}\) of \(f\).
 \end{definition}
 
+We now state optimal rates of convergence for the four aggregation schemes presented above. Theorem~\ref{prop:buneath5.1} below relies on the following assumptions:
+
+\begin{quotation}
+\noindent\textbf{H4.3:}\quad There exists \(S\subset{[0,1]}^{p_{n}}\) such that \(\mu_{\x}\) has a bounded density \(g_{\x}\) w.r.t the Lebesgue measure satisfying \(g_{\x}(\z)>0\) for \(\z\in S\).
+
+\vspace{3mm}
+
+\noindent\textbf{H4.4:}\quad \(M\leq c_{0}n\) and \(\log(M)\leq c_{0}n\) for some \(c_{0}>0\).
+\end{quotation}
+
+In the following statement, we use the notation \(a_{n}\asymp b_{n}\) for sequences \(a_{n}, b_{n}\) to denote that \(cb_{n}\leq a_{n}\leq Cb_{n}\) for some constants \(0<c\leq C<\infty\).
+
 \begin{theorem}[\cite{bunea_2007}]\label{prop:buneath5.1}
-    For \(\Lambda_{\mathrm{MS}}\), \(\Lambda_{\mathrm{L}}\), \(\Lambda_{\mathrm{C}}\), and \(\Lambda_{\mathrm{S}}\) as defined in Section~\ref{sec:buneaschemes}, 
-    \textcolor{red}{(Statement of lower bounds)}
-    \[\sup_{f_1, \ldots, f_2\in\mathcal{F}_{0}} \inf_{T_n}\sup_{f\in\mathcal{F}_0} \set{\E\normsq{f - T_n}_{2} - \min_{\lambda\in\Lambda}\normsq{f - \ftilde{\lambda}}_{2}} \geq c\psi_{n}\]
-    \textcolor{red}{INCOMPLETE SECTION}
+    Suppose that \textbf{H4.1} to \textbf{H4.4} hold. For \(\Lambda_{\mathrm{MS}}\), \(\Lambda_{\mathrm{L}}\), \(\Lambda_{\mathrm{C}}\), and \(\Lambda_{\mathrm{S}}\) as defined in Section~\ref{sec:buneaschemes}, the inequality at (\ref{eq:orclower}) is satisfied for the rates given by
+    \begin{equation}\label{eq:rates}
+        \psi_{n,M}\asymp\begin{cases}
+            \log(M)/n &\text{if }\Lambda = \Lambda_{\mathrm{MS}},\\[1mm]
+            M/n &\text{if }\Lambda = \Lambda_{\mathrm{L}},\\[1mm]
+            M/n &\text{if }\Lambda = \Lambda_{\mathrm{C}}\text{ and }M\leq\sqrt{n},\\[1mm]
+            \sqrt{\log\paren{1+M/\sqrt{n}}/n}&\text{if }\Lambda = \Lambda_{\mathrm{C}}\text{ and }M>\sqrt{n},\\[1mm]
+            (D\log(1+M/D)/n) &\text{if }\Lambda = \Lambda_{\mathrm{S}},
+        \end{cases}
+    \end{equation}
+    with \(M \log(M/D+1) \leq n \) and \(M \geq D\) in the case of Subset aggregation (S).
 \end{theorem}
 
-\subsection{A BIC-type penalty}
-\begin{definition}
+The proof of Theorem~\ref{prop:buneath5.1} is beyond the scope of this report. A proof in the case of a random design (being considered here) can be found in~\textcite{tsybakov_ora} and relies on a result on the -Liebler divergence between the distributions of two estimators vergence stated in page 99 of~\textcite{tsybakov_introduction_2009}.
+
+The four general aggregation schemes were introduced here as common staples in the litterature. A natural question to ask is when and why should we use one scheme over the other. This problem remains open~\cite{bunea_2007}, and it is generally difficult to compare these procedures. In fact, results that achieve the oracle adaptability in the sense of Definition~\ref{def:oracle} and (\ref{eq:oracleineq}) are rather rare or restricted in scope. Oftentimes, results attain a relaxation of (~\ref{eq:oracleineq}) is given in the form
+\begin{equation}\label{eq:oraclerelax}
+    \E\norm{f - \ftilde{\lambdahat{}}}_{2} \leq (1+\varepsilon)\inf_{\lambda\in\Lambda}\E\norm{f - \ftilde{\lambda}}_{2} + \Delta_{n,M},
+\end{equation}
+for some small \(\varepsilon>0\) independent of \(f\). This is the goal that we will adopt in this section.
+
+\subsection{The penalized least-squares approach}
+
+So far, we have studied properties that can inform our construction of an appropriate aggregate \(\ftilde{\lambdahat{}}\) but we have yet to actually construct such an estimator. In this section, rather that focusing on a single one of the aggregation schemes given above, we examine a penalized least squares approach drawn from~\textcite{bunea_2007}. We will consider aggregates \(\ftilde{\lambdahat{}}\) with weights satisfying
+
+\begin{equation}\label{eq:weights}
+    \lambdahat{}=\argmin_{\lambda\in\Lambda}\paren{\frac{1}{n}\normsq{\y_{n} - \ftilde{l\lambda}(\X_{n})} + \mathrm{pen}(\lambda)}
+\end{equation}
+
+for some penalty \(\mathrm{pen}(\lambda)\). We will show that, for an appropriate choice of \(\mathrm{pen}(\lambda)\), such an estimator gets close to all rates in~\ref{prop:buneath5.1} in the sense of (\ref{eq:oraclerelax}).
+
+\begin{definition}\label{def:bic}
     For \(\lambda\in\Lambda\), let \(M(\lambda) := \norm{\lambda}_{0}\) (i.e., the number of non-zero coefficients in \(\lambda\)) and write
     \[L(\lambda) = 2\log\paren{\frac{eM}{\min(M(\lambda), 1)}}.\]
-    For \(a>0\), we define the Bunea-Tsybakov-Wegkamp \textcolor{red}{(I don't know what to call it)} penalty to be
+    For \(a>0\), we define the Bunea-Tsybakov-Wegkamp BIC-type penalty to be
     \[\penBIC{\lambda} := \frac{2\sigma^{2}}{n}M(\lambda)\paren{1+\frac{2+a}{1+a}\sqrt{L(\lambda)} + \frac{1+a}{a}{L(\lambda)}}.\]
     This penalty yields the BIC-type least-squares aggregate \(\ftilde{\mathrm{BIC}} := \ftilde{\lambdahat{\mathrm{BIC}}}\) with 
     \[\lambdahat{BIC}=\argmin_{\lambda\in\R^{M}}\set{\frac{1}{n}\normsq{\y - f_{\lambda}(\x)} - \penBIC{\lambda}}\]
 \end{definition}
 
-The theorem below relies on the two following lemmas, which are stated without proof:
+Theorem~\ref{thm:bunea31} below, which get us closer to a result of the type in~\ref{eq:oraclerelax} for the \(\ftilde{\mathrm{BIC}}\), relies on the two following lemmas, which are stated without proof:
 
 \begin{lemma}\label{lemm:binombound}
     For positive integers \(m \leq M\),
     \[\binom{M}{m} \leq \paren{\frac{eM}{m}}^m.\]
 \end{lemma}
 
-\begin{lemma}[Adapted from Birgé et al., 2001 \textcolor{red}{(REF)}]\label{lemm:birge}
-    Suppose that there exists a family of sets \(\set{\Lambda_{\alpha}}_{\alpha\in\Acal}\) and integers \(\set{m_{\alpha}}\) such that \(M(\lambda) = m_{\alpha}\) for all \(\lambda\in\Lambda_{\alpha}\). Suppose, furthermore, that there exists a family of non-negative weights \(\set{L_{\alpha}}_{\alpha\in\Acal}\) satisfying 
-    \[\Sigma:=\sum_{\alpha\in\Acal}\exp\paren{-m_{\alpha}L_{\alpha}}<\infty.\]
-    Let \(\theta\in(0,1)\) and \(K>2-\theta\). If there exists a finite subset \(\bar{\Acal}\subset\Acal\) such that, for all \(\alpha\in\Acal\setminus\bar{\Acal}\), 
-    \[\mathrm{pen}(\lambda)\geq \frac{\sigma^2}{n}M(\lambda)\paren{K + 2(2-\theta)\sqrt{L_{m}} +2{\theta^{-1}}L_{m}} =: Q_{\lambda}\qquad\text{whenever }\lambda\in\Lambda_{\alpha}.\]
-    Then, the corresponting aggregate \(\ftilde{\lambdahat{}}\) defined by (\ref{eq:weights}) exists almost surely and satisfies
-    \begin{equation}
-        \paren{1-\theta}\Ep{\normsq{f - \ftilde{\lambdahat{}}}} \leq \inf_{\lambda\in\Lambda}\set{\normsq{f - \ftilde{\lambda}} + \mathrm{pen}(\lambda) - \frac{\sigma^2}{n}M(\lambda)} + \sup_{\lambda\in\Lambda}\set{Q_{\lambda} - \mathrm{pen}} + 
+\begin{lemma}[Adapted from~\textcite{BirgeMassart2001}]\label{lemm:birge}
+    Let \(\Acal\) be an index set and let \(\mathrm{pen}_{0}\) be a penalty. Suppose that there exists a family of weight sets \(\set{\Lambda_{\alpha}}_{\alpha\in\Acal}\), a collection of integers \(\set{m_{\alpha}}_{\alpha\in\Acal}\), and a real sequence \(\set{p_{\alpha}}_{\alpha\in\Acal}\) such that \(M(\lambda) = m_{\alpha}\) and \(\mathrm{pen}_{0}(\lambda) = p_{\alpha}\) for all \(\lambda\in\Lambda_{\alpha}\). Suppose, furthermore, that there exists a collection of non-negative real numbers \(\set{L_{\alpha}}_{\alpha\in\Acal}\) satisfying 
+    \begin{equation}\label{eq:conditionbirge1}
+        \Sigma:=\sum_{\alpha\in\Acal}\exp\paren{-m_{\alpha}L_{\alpha}}<\infty.
     \end{equation}
+    Let \(\theta\in(0,1)\) and \(K>2-\theta\). If there exists a finite subset (possibly empty) \(\bar{\Acal}\subset\Acal\) such that, for all \(\alpha\in\Acal\setminus\bar{\Acal}\), 
+    \begin{equation}\label{eq:conditionbirge2}
+        p_{\alpha} \geq \frac{\sigma^2}{n}m_{\alpha}\paren{K + 2(2-\theta)\sqrt{L_{\alpha}} +2{\theta^{-1}}L_{\alpha}} =: Q_{\alpha}\qquad\text{whenever }\lambda\in\Lambda_{\alpha}.
+    \end{equation}
+        Then, the aggregate \(\ftilde{\lambdahat{}}\) corresponding to \(\mathrm{pen}_{0}\) as defined by  (\ref{eq:weights}) exists almost surely and satisfies
+    \begin{align}
+        \notag\paren{1-\theta}\E{\normsq{f - \ftilde{\lambdahat{}}}} \leq 
+        \inf_{\alpha\in\Acal}&\set{\inf_{\lambda\in\Lambda_{\alpha}}\paren{\normsq{f - \ftilde{\lambda}}} + p_{\alpha} - \frac{\sigma^2}{n}m_{\alpha}}\\
+        \notag&+ \sup_{\alpha\in\Acal}\set{Q_{\alpha} - p_{\alpha}}\\
+        &+ \frac{\sigma^{2}}{n}m_{\alpha}\Sigma \paren{\paren{2-\theta}^{2}\paren{K+\theta-2}^{-1} + 2\theta^{-1}}
+    \end{align}
 
 \end{lemma}
-\textcolor{red}{NOTE: Here, \(\Acal\) will be \(\set{(m,k):m\leq M, k\leq \binom{M}{m}}\). It's different than in previous sections, but it's similar in that it denotes a subset of the \(\fhat{n}{j}\).}
 
-\begin{theorem}[\cite{bunea_2007}]\label{prop:buneath31}
-    Assume that the \(e_{i}\) are iid \(\Ncal(0, \sigma^{2})\) and that the functions \(f, \fhat{n}{1}, \ldots, \fhat{n}{M}\) are uniformly bounded. Then, for all \(a>0\), \(M\geq 2\), and \(n\geq 1\),
+Lemma~\ref{lemm:birge} may seem rather convoluted and abstract. However, it essentially tells us that the risk \(\E{\normsq{f - \ftilde{\lambdahat{}}}}\) can be upper-bounded if a suitable discretization of the admissible weights can be found. This utility will become apparent in the proof of the following theorem.
+
+\begin{theorem}[\cite{bunea_2007}]\label{thm:bunea31}
+    Assume that \textbf{H4.1} and \textbf{H4.2} hold. Then, for all \(a>0\), \(M\geq 2\), and \(n\geq 1\),
     \begin{align*}
         \E\normsq{\ftilde{\mathrm{BIC}} - f} &\leq (1+a)\inf_{\lambda\in\R^{M}}\set{\normsq{\ftilde{\lambda} - f} + \frac{\sigma^{2}}{n}\paren{5+\frac{2+3a}{a}{L(\lambda)}}M(\lambda)} + \frac{6\sigma^{2}{(1+a)}^{2}}{an(e-1)}
     \end{align*}
 
 \end{theorem}
 
-Theorem~\ref{prop:buneath31} implies that \(\ftilde{\mathrm{BIC}}\) mimics the oracles for all four aggregation types.
+\begin{myproofbox}
+    \textit{Proof: }Define \(\Lambda_{m}\) for each integer \(0\leq m\leq M\) as
+    \[\Lambda_{m}:=\set{\lambda\in\R^{M} : M(\lambda) = m}\]
+    and let \(\set{J_{m,k}}\) for \(k=1,\ldots,\binom{M}{m}\) be the collection of subsets all of \([M]\) such that \(|J_{m,k}| = m\). Define
+    \[\Lambda_{m,k} :=\set{\lambda\in\Lambda_{m}:\lambda_{j}\neq 0 \iff j\in J_{m,k}}\]
+    and note that \(\mathcal{P}_{m}:=\set{\Lambda_{m,k}:k=1,\ldots,\binom{M}{m}}\) forms a partition on \(\Lambda_{m}\), while \(\bigcup_{m}\mathcal{P}_{m}\) is a partition of \(\R^{M}\). Notice also that
+    \begin{itemize}
+        \item the function \(L(\lambda)\) from Definition~\ref{def:bic} is constant on each \(\Lambda_{m}\), \(0\leq m\leq M\), with\[L(\lambda) = 2\ln\paren{\frac{eM}{\min(M(\lambda), 1)}} =: L_{m}\]
+        \item trivially, the zero-norm \(M(\lambda)\) is a constant \(m\) on each \(\Lambda_{m}\), \(0\leq m\leq M\);
+        \item the penalty \(\penBIC{\lambda}\) is constant on each \(\Lambda_{m}\), \(0\leq m\leq M\).
+    \end{itemize}
+    More formally, for \(0\leq m\leq M\) and \(k=1,\ldots,\binom{M}{m}\), we have that the images \(\penBIC{\Lambda_{m,k}} = \set{p_{m}}\) and \(L(\Lambda_{m,k})=\set{L_{m}}\) for some \(\set{p_{m}}_{m=0}^{M}\) and \(\set{L_{m}}_{m=0}^{M}\).
+    
+    Positioning ourselves for an application of Lemma~\ref{lemm:birge}, we let \(\Acal := \set{(m,k):m\leq M, k\leq \binom{M}{m}}\), \(K=2\), and \(\theta = a/(1+a)\) for some arbitrary \(a>0\). It is easy to see from the definition of \(\penBIC{\lambda}\) that condition (\ref{eq:conditionbirge2}) is satisfied with equality for all \((m,k)\in\Acal\).
+    Furthermore, let \(\Sigma:=\sum_{\alpha\in\Acal}\exp\paren{-m_{\alpha}L_{\alpha}}\) and note that
+    \begin{align}
+        \notag\Sigma &= \sum_{m=1}^{M} \binom{M}{m}\paren{e^{\ln\paren{eM/m}}}^{-2m} = \sum_{m=1}^{M} \binom{M}{m}\paren{\frac{eM}{m}}^{-2m}\\
+        \notag&\leq \sum_{m=1}^{M}\paren{\frac{eM}{m}}^{m}\paren{\frac{eM}{m}}^{-2m} = \sum_{m=1}^{M}\paren{\frac{m}{M}}^{m}e^{-m}&(\text{Lemma~\ref{lemm:binombound}})\\
+        &\leq \sum_{m=1}^{M} e^{-m} \leq \frac{1}{e-1}.\label{line:buneaexp}
+    \end{align} 
+    Hence, condition (\ref{eq:conditionbirge1}) is also satisfied. We apply Lemma~\ref{lemm:birge} and obtain that
+    \begin{align*}
+        \paren{\frac{1}{1+a}}\E{\normsq{f - \ftilde{\mathrm{BIC}}}} &\leq 
+        \inf_{(m,k)\in\Acal}\set{\inf_{\lambda\in\Lambda_{m}}\paren{\normsq{f - \ftilde{\lambda}}} + p_{m} - \frac{\sigma^2}{n}m}\\
+        &\qquad\qquad + \sup_{(m,k)\in\Acal}\set{p_{m} - p_{m}}\\
+        &\qquad\qquad + \frac{\sigma^{2}}{n}m\Sigma \paren{\paren{2-\paren{\frac{a}{1+a}}}^{2}{\paren{\frac{1+a}{a}}} + {\frac{2+2a}{a}}}\\
+        &= \inf_{(m,k)\in\Acal}\set{\inf_{\lambda\in\Lambda_{m}}\paren{\normsq{f - \ftilde{\lambda}}} + p_{m} - \frac{\sigma^2}{n}m}\\
+        &\qquad\qquad \frac{(1+a)\sigma^{2}}{an}\paren{\paren{\frac{2+a}{1+a}}^{2} +2}\Sigma.
+    \end{align*}
+
+    A simple argument can be made (using, for example, the quadratic formula on \(L_{m}\)) to show that
+    \[n\penBIC{\lambda} - m\sigma^{2} = \sigma^{2}m\paren{1+2\paren{\frac{2+a}{1+a}}\sqrt{L_{m}} + 2\paren{\frac{1+a}{a}}L_{m}}\leq \sigma^{2}m\paren{5 + \frac{2+3a}{a}L_{m}}\]
+    for any \(\Lambda_{m}\), \(m=0,\ldots,M\), and \(a>0\). Combining this with (\ref{line:buneaexp}),
+    \begin{align*}
+        \paren{\frac{1}{1+a}}\E{\normsq{f - \ftilde{\lambdahat{}}}}&\leq \inf_{(m,k)\in\Acal}\set{\inf_{\lambda\in\Lambda_{m}}\paren{\normsq{f - \ftilde{\lambda}}} + \frac{\sigma^{2}m}{n}\paren{5 + \frac{2+3a}{a}L_{m}}}\\[2mm]
+        &\qquad\qquad + \frac{6\sigma^{2}{(1+a)}}{an(e-1)}\\
+        &= \inf_{\lambda\in\R^{M}}\set{\normsq{\ftilde{\lambda} - f} + \frac{\sigma^{2}}{n}\paren{5+\frac{2+3a}{a}{L(\lambda)}}M(\lambda)} + \frac{6\sigma^{2}{(1+a)}}{an(e-1)}.
+    \end{align*}
+    \qed
+\end{myproofbox}
 
 \newpage
 \printbibliography{}
