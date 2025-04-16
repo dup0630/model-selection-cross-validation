@@ -1,0 +1,509 @@
+
+\documentclass{beamer}
+\usetheme{Madrid}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumerate}
+\usepackage[style=authoryear, maxcitenames=1, dashed=false]{biblatex}
+\addbibresource{citations.bib}
+
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Borel}[1]{\mathcal{B}\paren{#1}}
+\newcommand{\0}{\emptyset}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Ep}[1]{\mathbb{E}\left[ #1 \right]}
+\newcommand{\paren}[1]{\left(#1 \right)}
+\newcommand{\sqbr}[1]{\left[#1 \right]}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\norm}[1]{|\hspace{-1pt}|#1 |\hspace{-1pt}|}
+\newcommand{\normsq}[1]{\norm{#1}^{2}}
+\newcommand{\ind}[1]{\mathmybb{1}_{\sqbr{#1}}}
+\newcommand{\data}{\mathcal{D}_{n}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Acal}{\mathcal{A}_{n}}
+\newcommand{\Tcal}{\mathcal{T}_{n}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Fcal}{\mathcal{F}}
+\newcommand{\aseq}{\stackrel{\mathrm{a.s.}}{=}}
+\newcommand{\X}{\boldsymbol{X}}
+\newcommand{\x}{\boldsymbol{x}}
+\newcommand{\z}{\boldsymbol{z}}
+\newcommand{\y}{\boldsymbol{y}}
+\newcommand{\e}{\boldsymbol{e}}
+\newcommand{\Cov}[1]{\mathrm{Cov}\paren{#1}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bbetahat}{\boldsymbol{\hat{\beta}}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\Loss}[1]{L_{n}\paren{#1}}
+\newcommand{\Rhat}[2]{\hat{R}_{n, #1}\paren{#2}}
+\newcommand{\alphahat}[1]{\hat{\alpha}^{#1}}
+\newcommand{\alphatilde}{\tilde{\alpha}}
+\newcommand{\alphabar}{\bar{\alpha}}
+\newcommand{\lev}{h_{ii,\alpha}}
+\newcommand{\loocv}[1]{\hat{R}^{(1)}_{n}\paren{#1}}
+\newcommand{\ho}{\hat{L}_{\mathrm{ho}}}
+\newcommand{\op}[1]{o_{\prob}\paren{#1}}
+\newcommand{\Op}[1]{O_{\prob}\paren{#1}}
+\newcommand{\sigmahat}{\hat{\sigma}^{2}_{n}}
+\newcommand{\fhat}[2]{\hat{f}_{#1, #2}}
+\newcommand{\ftilde}[1]{\tilde{f}_{#1}}
+\newcommand{\lambdahat}[1]{\hat{\lambda}_{#1}}
+\newcommand{\blambdahat}{\boldsymbol{\hat{\lambda}}}
+\newcommand{\pen}[1]{\mathrm{pen}\paren{#1}}
+\newcommand{\penBIC}[1]{\mathrm{pen}_{\mathrm{BIC}}\paren{#1}}
+\newcommand{\tr}[1]{\mathrm{tr}\paren{#1}}
+\newcommand{\ols}[1]{\paren{\X^{\top}_{#1}\X_{#1}}\X^{\top}_{#1}\y}
+\newcommand{\fho}{\hat{f}^{(\mathrm{ho})}_{n}}
+
+% For indicator functions:
+\DeclareMathAlphabet{\mathmybb}{U}{bbold}{m}{n}
+\newcommand{\1}{\mathmybb{1}}
+
+\title[CV for Selection and Aggregation]{MATH 410 Project: The Asymptotics of Cross-Validation and Aggregation in the Regression Setting}
+\author[Diego Urdapilleta]{Diego Urdapilleta de la Parra}
+\subtitle{Supervised by: Prof.\ Mehdi Dagdoug}
+\institute[McGill]{McGill University}
+\date{2025}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage{}
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Introduction: The Problem of Model Selection}
+\begin{frame}{Introduction}
+  \begin{itemize}
+    \item<1-> Simpler models offer efficiency and stability, but may underfit; complex models capture structure, but risk overfitting.
+
+    \item<2-> Theoretical assumptions behind models are often unverifiable, motivating comparisons among alternatives.
+
+    \item<3-> Aggregation offers a complementary strategy, combining models to enhance robustness and performance.
+  \end{itemize}
+
+  This work explores the asymptotic and empirical behavior of model selection and aggregation in regression tasks.
+\end{frame}
+
+\begin{frame}{Setup and Notation}
+  For positive integers $n$ and $p_{n}$, let $(y, \x):\Omega\to\R\times{[0,1]}^{p_{n}}$ be a real-valued random vector with distribution $\mu_{y, \x}$ such that 
+  \begin{itemize}
+    \item $\E{|y|^{2}}<\infty$
+    \item $\E\normsq{\x}<\infty$
+    \item $\Ep{\x\x^{\top}}\succ 0$
+  \end{itemize}
+
+  A Borel-measurable function \(f:{[0,1]}^{p_{n}} \to \R\) that satisfies
+  \[f(\x) \aseq \Ep{y\mid \x}\]
+  is called the \emph{regression} function of \(y\) on \(\x\). 
+  
+  Let \(\data := \set{\paren{y_{i}, \x_{i}}:i\in [n]}\) be a sample of independent data points drawn from \(\mu_{y, \x}\).
+  Define the residual \(\epsilon_{i}:= y_{i} - f(\x_{i})\), which yields the decomposition
+  \[y_{i} = f(\x_{i}) + \epsilon_{i}, \quad i\in[n],\]
+\end{frame}
+
+\begin{frame}{Cross-validation}  
+  Let \(J\) be an index set and let \(\set{E_{j}}_{j\in J}\) be a family of subsets \(E_{j}\subset [n]\) such that \(|E_{j}|=n_{1}\) for all \(j\in J\), and write \(V_{j} := E_{j}^{c}\). 
+  
+  For each subset \(E_{j}\), we consider the estimation sample \(\data^{E_{j}}\) of \(n_{1}\) data ponts given by
+  \[\data^{E_{j}} = \set{\paren{y_{i}, \x_{i}}\in\data :i\in E_{j}}.\]
+
+  For each \(j\in J\), we fit the model \(\hat{f}\) on the estimation sample \(\data^{E_{j}}\) and compute the \alert{\emph{hold-out}} loss against the remaining \(n-n_{1}=: n_{2}\) data points in \(\data^{V_{j}}\):
+  \[\hat{R}_{n}^{E_{j}} := \frac{1}{n_{2}}\sum_{i \in V_{j}} \paren{y_{i} - \hat{f}\paren{\x_{i};\data^{E_{j}}}}^{2}\]
+\end{frame}
+
+\begin{frame}{Cross-validation}
+  The cross-validation loss estimator is
+  \[\hat{R}^{CV}_{n}:= \frac{1}{|J|}\sum_{j\in J}\hat{R}_{n}^{E_{j}}.\]
+
+  Different choices of  \(J\) and estimation size \(n_{1}\) yield different variants of cross-validation.
+  
+  Examples:
+  \begin{itemize}
+    \item \(n_{1}=n-1\) for the \emph{leave-one-out} estimator,
+    \item \(|J|=k\) and \(n_{1} = n(k-1)/k\) for the \emph{\(k\)-fold} estimator.
+  \end{itemize}
+
+\end{frame}
+
+\section{Variable Selection for Linear Models}
+\begin{frame}{Linear models: Setup}
+  Suppose that the regression function \(f\) is \alert{linear}:
+  \[\y = \X\bbeta + \e,\]
+
+  We let \(\Acal\subset2^{[p_{n}]}\) be a family of index sets representing candidate models. For \(\alpha\in\Acal\), we write by \(p_{n}(\alpha) := |\alpha|\) and consider
+  \[f_{\alpha}(\X) = \X_{\alpha}\bbeta_{\alpha},\]
+
+  We employ the \emph{Ordinary Least Squares} (OLS) estimator \(\bbetahat_{\alpha}\) of \(\bbeta_{\alpha}\),
+  \[\bbetahat_{\alpha} = \ols{\alpha}.\]
+
+  We will use the notations \alert{\(H_{\alpha} := \X_{\alpha}\paren{\X_{\alpha}^{\top}\X_{\alpha}}\X_{\alpha}^{\top}\)} for the hat matrix, \alert{\(M_{\alpha}:=I_{n}-H_{\alpha}\)} for the anihilator matrix, and \alert{\(h_{ii,\alpha}:=\x_{i\alpha}^{\top}{(\X_{\alpha}^{\top}\X_{\alpha})}^{-1}\x_{i\alpha}\)} for the \(i\)th leverage corresponding to \(\alpha\in\Acal\).
+\end{frame}
+
+\begin{frame}{Linear models: Setup}
+  Some definitions:
+  \begin{enumerate}
+    \item We say \(\alpha\in\Acal\) is \emph{correct} if \(\Ep{\y\mid\X}\aseq f_{\alpha}(\X)\), and we denote by \(\Tcal\) the set of correct models in \(\Acal\).
+    \item We say \(\alpha\in\Acal\) is \emph{wrong} if it is not correct, and we denote by \(\Tcal^{c}\) the set of wrong models in \(\Acal\).
+    \item We say \(\Acal\) is \emph{embedded} if there exists an enumeration \(\alpha_{1}, \alpha_{2}, \ldots, \alpha_{k}\) of all elements in \(\Acal\) such that \[\alpha_{1}\subset\alpha_{2}\subset\cdots\subset\alpha_{k}.\]
+\end{enumerate}
+
+Define the losses
+\[\Loss{\alpha}:=\frac{1}{n}\normsq{f(\X) - \hat{f}_{\alpha}\paren{\X}}\quad\text{and}\quad R_{n}(\alpha):= \Ep{\Loss{\alpha}\mid\X}\]
+for \(\alpha\in\Acal\), with \(\hat{f}_{\alpha}(\X):=\X_{\alpha}\bbetahat_{\alpha}\).
+
+\end{frame}
+
+\begin{frame}{Linear models: Assumptions}
+  \begin{align*}
+    &\mathbf{H1:}\qquad \liminf_{n\to\infty} \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}>0 \text{ almost surely for all }\alpha \in\Tcal^{c}.\\
+    &\mathbf{H2:} \qquad \Ep{\normsq{\x}}<\infty.\\[2.5mm]
+    &\mathbf{H3:}\qquad \lim_{n\to\infty}\max_{i\leq n}\,h_{ii,\alpha} \aseq 0 \text{ for all }\alpha \in\Acal.\\
+    &\mathbf{H4:}\qquad \sum_{\alpha\in\Tcal^{c}}\frac{1}{\paren{nR_{n}(\alpha)}^{m}}\to_{\prob}0\text{ and }\Ep{e_i^{4m}\mid\x_i}<\infty\quad\text{for some }m\geq 1.
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Linear models: Loss}
+  \begin{block}{Lemma}
+    The following equalities hold almost surely:
+    \[\Loss{\alpha} = \frac{1}{n}\normsq{H_{\alpha}\e} + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\quad\text{and}\quad R_{n}(\alpha) = \frac{1}{n}\sigma^{2}p_{n}(\alpha) + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\]
+    where \(H_{\alpha} = \X_{\alpha}\paren{\X_{\alpha}^{\top}\X_{\alpha}}^{-1}\X_{\alpha}^{\top}\) and \(M_{\alpha}= I_{n} - H_{\alpha}\).
+  \end{block}
+  \begin{block}{Proposition}
+    Suppose that that \(\Tcal\) is non-empty, and let \(\alpha^{*}_{n}\) be the smallest correct model in \(\Tcal\). Then, \(\alpha^{*}_{n}\) minimizes \(R_{n}(\alpha)\) over \(\alpha\in\Acal\) with probability 1.
+  \end{block}
+
+\end{frame}
+
+\begin{frame}{Linear models: Loss}
+  \begin{block}{Proposition}
+    Suppose that that \(\Tcal\) is non-empty, and let \(\alpha^{*}_{n}\) be the smallest correct model in \(\Tcal\). Then, \(\alpha^{*}_{n}\) minimizes \(R_{n}(\alpha)\) over \(\alpha\in\Acal\) with probability 1.
+  \end{block}
+
+  \textit{Proof (partial): }
+  Let \(\alpha\in\Acal\) be arbitrary and suppose that \(\alpha\in\Tcal\). Then, \(\X_{\alpha}\bbeta_{\alpha} = \X\bbeta\) and \(p_{n}(\alpha_{n}^{*})\leq p_{n}(\alpha)\). Thus,
+    \begin{align*}
+        R_{n}(\alpha) &= \frac{1}{n}\sigma^{2}p_{n}(\alpha) + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}\\[2mm]
+        &= \frac{1}{n} \sigma^{2}p_{n}(\alpha) + \frac{1}{n}\underbrace{\normsq{M_{\alpha}\X_{\alpha}\bbeta_{\alpha}}}_{0}\\
+        &= \frac{1}{n}\sigma^{2}p_{n}(\alpha)\; \geq \; \frac{1}{n}\sigma^{2}p_{n}(\alpha_{n}^{*}) = R_{n}(\alpha_{n}^{*}).
+    \end{align*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linear models: Consistency and efficiency}
+  Let \(\hat{R}_{n}\) be a model selection criterion and let \(\alphahat{}_{n}\) be the model selected by minimizing \(\hat{R}_{n}\) over \(\Acal\). Let \(\alpha^{*}_{n}\) denote the model minimizing \(R_{n}\) over \(\Acal\). We say that \(\hat{R}_{n}\) is \alert{consistent} if 
+  \[\prob\set{\alphahat{}_{n} = \alpha^{*}_{n}}\to 1\]
+  as \(n\to\infty\). We say that \(\hat{R}_{n}\) is \alert{assymptotically loss efficient} if 
+  \[\frac{L_{n}(\alphahat{}_{n})}{L_{n}(\alpha^{*}_{n})}\xrightarrow{\prob} 1.\]
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linear models: Consistency and efficiency}
+  \begin{block}{Proposition}
+    If \(\hat{R}_{n}\) is consistent, then it is asymptotically loss efficient.
+  \end{block}
+
+    \textit{Proof: } Suppose that \(\hat{R}_{n}\) is consistent. Clearly, if \(\alphahat{}_{n} = \alpha^{*}_{n}\), then \(\Loss{\alphahat{}} = \Loss{\alpha^{*}_{n}}\). Therefore, 
+    \[\prob\set{\alphahat{}_{n} = \alpha^{*}_{n}}\leq \prob\set{\Loss{\alphahat{}} = \Loss{\alpha^{*}_{n}}}.\]
+    By consistency, the left-hand side converges to 1, so that the right-hand side must also converge to 1.\qed{}
+
+    \textbf{Remark: }The converse is not necessarily true, but it may be satisfied under some conditions.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linear models: Consistency and efficiency}
+  \begin{block}{Proposition (\cite{shao_1997})}
+    Suppose H1, \(p_{n}/n\to 0\), and that \(\Tcal\) is non-empty for all but finitely many \(n\).
+    \begin{enumerate}
+        \item If \(|\Tcal|=1\) for all but finitely many \(n\), then consistency is equivalent to asymptotic loss efficiency.
+        \item If \(|\Tcal|\geq 2\) and \(p_{n}(\alpha^{*}_{n})\not\xrightarrow{\prob}\infty\), then consistency is equivalent to asymptotic loss efficiency.
+    \end{enumerate}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linear models: Consistency and efficiency}
+  \textit{Proof (of 1.): } Suppose that \(\hat{R}_{n}\) is not consistent. We know that \(\Loss{\alpha^{*}_{n}} = (1/n)\normsq{H_{\alpha}\e}\), and
+  \[\Ep{\Loss{\alpha^{*}_{n}}} = \frac{1}{n}\sigma^{2}p_{n}(\alpha^{*}_{n})\leq \frac{1}{n}\sigma^{2}p_{n}\to 0 \quad\text{as }n\to\infty\]
+  by assumption. We have shown that \(\Loss{\alpha^{*}_{n}}\xrightarrow{L_{1}} 0\), which implies \(\Loss{\alpha^{*}_{n}}\xrightarrow{\prob} 0\).
+
+  Since \(\hat{R}_{n}\) is not consistent, there must exist \(\alphatilde_{n}\neq\alpha^{*}\) for infinitely many \(n\) such that \(\prob\set{\alphahat{}_{n} = \alphatilde_{n}} \neq 0\). Notice that, since \(\Tcal=\set{\alpha^{*}}\), it must be the case that \(\alphatilde_{n}\in\Tcal^{c}\). We have the following:
+  \[\Loss{\alphahat{}_{n}}\geq \ind{\alphahat{}_{n} = \alphatilde_{n}}\Loss{\alphatilde_{n}} = \ind{\alphahat{}_{n} = \alphatilde_{n}}\paren{\frac{1}{n}\normsq{H_{\alphatilde_{n}}\e + \frac{1}{n}\normsq{M_{\alpha}\X\bbeta}}}.\]
+  By assumption \textbf{H1}, the latter expression cannot not converge to 0.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linear models: Consistency and efficiency}
+  \textit{Proof (of 2.): } Suppose again that \(\hat{R}_{n}\) is not consistent. Since \(\Tcal\) contains at least two models, there must exist \(\alphatilde_{n}\in\Tcal\) such that \(\alphatilde_{n}\neq \alpha^{*}\) and \(\prob\set{\alphahat{}_{n} = \alphatilde_{n}}\not\to 0\). Hence,
+  \[\frac{\Loss{\alphahat{}_{n}}}{\Loss{\alpha^{*}_{n}}} - 1 \geq \paren{\frac{\Loss{\alphatilde{}_{n}}}{\Loss{\alpha^{*}_{n}}} - 1}\ind{\alphahat{}_{n} = \alphatilde_{n}} = \paren{\frac{\normsq{H_{\alphatilde_{n}}\e}}{\normsq{H_{\alpha^{*}_{n}}\e}} - 1}\ind{\alphahat{}_{n} = \alphatilde_{n}}\not\xrightarrow{\prob}0.\]\qed{}
+\end{frame}
+
+\begin{frame}{The leave-one-out}
+   We define the leave-one-out loss estimator for a model \(\alpha\in\Acal\) to be 
+\[\loocv{\alpha} := \frac{1}{n}\sum_{i=1}^{n}\paren{(y_{i} - \x_{i\alpha}^{\top}\bbetahat_{\alpha}^{(i)})}.\]
+%\qquad\text{with }\bbetahat_{\alpha}^{(i)} = \paren{\sum_{i\in[n]\setminus\set{i}}\x_{i\alpha}\x_{i\alpha}^{\top}}^{-1} \sum_{i\in[n]\setminus\set{i}} y_{i}\x_{i\alpha}
+
+\begin{block}{Proposition}
+  For \(alpha\in\Acal\), the leave-one-out estimator \(\loocv{\alpha}\) satisfies the following equality:
+    \[\loocv{\alpha}= \frac{1}{n}\sum_{i=1}^{n}\paren{\frac{y_{i}-\x_{i\alpha}^{\top}\bbetahat_{\alpha}}{1-h_{ii,\alpha}}}^{2},\]
+    where \(h_{ii,\alpha} = \x_{i\alpha}^{\top}{(\X_{\alpha}^{\top}\X_{\alpha})}^{-1}\x_{i\alpha}\) denotes the \(i\)th leverage and \(\bbetahat_{\alpha}\) is the OLS estimator for model \(\alpha\) fitted on the whole data set.
+\end{block}
+\end{frame}
+
+\begin{frame}{The leave-one-out}
+  \begin{block}{Lemma (\cite{shao_1993})}
+    \begin{equation}
+      \loocv{\alpha} = \begin{cases}
+          R_{n}(\alpha) + \sigma^{2} + \op{1} &\text{ if }\alpha\in\Tcal^{c}\\[2mm]
+          \frac{1}{n}\normsq{M_{\alpha}\e} + \frac{2}{n}\sigma^{2}p(\alpha) + \op{n^{-1}} &\text{ if }\alpha\in\Tcal
+      \end{cases}
+      \end{equation}
+  \end{block}
+\begin{block}{Proposition (\cite{shao_1993})}
+  Suppose that \(\Tcal\) is non-empty and let \(\alphahat{(1)}\) be the model minimizing \(\loocv{\alpha}\).
+    \begin{enumerate}
+        \item Under H1, H2, and H3, \[\lim_{n\to\infty}\prob\set{\alphahat{(1)}\in\Tcal^{c}}=0.\]
+        \item If \(p(\alpha^*) < p\), \[\lim_{n\to\infty}\prob\set{\alphahat{(1)}=\alpha^{*}}\neq 1.\]
+    \end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}{The leave-one-out}
+  \textbf{Interpretation: } The leave-one-out places too much weight on the estimation and too little on the evaluation.
+  \begin{itemize}
+    \item \(R_{n_{1}}(\alpha) = \sigma^{2}p(\alpha)/n_{1}\) for \(\alpha\in\Tcal\).
+    \item The larger \(n_{1}\), the closer \(R_{n_{1}}(\alpha)\) is to a flat line.
+    \item The leave-one-out, adopts the largest possible \(n_{1}= n-1\), making it difficult for the estimator to distinguish between correct models.
+  \end{itemize}  
+
+  \textbf{Conjecture: } A smaller estimation set and a larger validation set might improve the performance of cross-validation procedures for model selection.
+\end{frame}
+
+\begin{frame}{A general perspective: the GIC}
+  \textbf{Why penalize?}
+  \begin{itemize}
+    \item Avoid overfitting,
+    \item Favour less complex models.
+  \end{itemize}
+
+  Given some loss estimator \(\hat{R}_{n}\), we may define the corresponding \emph{penalized selection criterion} as
+  \[\hat{R}_{n}'(\alpha) = \hat{R}_{n}(\alpha) + \pen{\alpha}\]
+  for some penalty function \(\mathrm{pen}:\Acal\to\R\). 
+
+\end{frame}
+
+\begin{frame}{A general perspective: the GIC}
+  
+  A large portion of selection criteria in the literature can be reduced to a general penalized criterion with a penalty of the type 
+\[\mathrm{pen}_{\lambda_{n}}(\alpha) = \frac{1}{n} \lambda_{n} \sigmahat p_{n}(\alpha),\]
+for some some estimator \(\sigmahat\) of \(\sigma^{2}\) and a sequence of real numbers \(\set{\lambda_{n}}_{n\geq 1}\) satisfying \(\lambda_{n}\geq 2\) and \(\lambda_{n}/n\to 0\). This penalty yields the \alert{\emph{Generalized Information Criterion}}~(\cite{shao_1997}):
+\[\Rhat{\lambda_{n}}{\alpha} := \frac{1}{n}\normsq{\y - \X_{\alpha}\bbetahat_{\alpha}} + \frac{1}{n}\lambda_{n}\sigmahat p_{n}(\alpha)\quad\text{for }\alpha\in\Acal,\]
+\end{frame}
+
+\begin{frame}{GIC:\@ The case of \(\lambda_{n} \equiv 2\)}
+  
+\begin{block}{Theorem}
+  Suppose that \textbf{H4} holds and that \(\sigmahat\) is consistent for \(\sigma^{2}\). Let 
+    \begin{enumerate}
+        \item If \(|\Tcal|\leq1\) for all but finitely many \(n\), then \(\hat{R}_{n,2}\) is asymptotically loss efficient.
+        \item Suppose that \(|\Tcal|> 1\) for all but finitely many \(n\). If there exists a positive integer \(m\) such that \(\Ep{y_{1} - \x_{1}^{\top}\bbeta}^{4m}<\infty\) and 
+        \begin{equation}\label{eq:conditionsums}
+            \sum_{\alpha\in\Tcal}\frac{1}{\paren{p_{n}(\alpha)}^{m}}\xrightarrow{n\to\infty} 0 \quad\text{or}\quad \sum_{\substack{\alpha\in\Tcal,\\ \alpha\neq\alpha^{*}}}\frac{1}{\paren{p_{n}(\alpha) - p_{n}(\alpha^{*})}^{m}}\xrightarrow{n\to\infty} 0,
+        \end{equation}
+        then \(\hat{R}_{n,2}\) is asymptotically loss efficient.
+        
+    \end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}{GIC:\@ The case of \(\lambda_{n} \equiv 2\)}
+  
+\begin{block}{Theorem (continued)}
+    \begin{itemize}
+        \item Suppose that \(|\Tcal|>1\) for all but finitely many \(n\). 
+        %Suppose, furthermore, that for any integer \(q\geq1\) and constant \(c>2\), 
+        %\begin{equation}
+        %    \label{eq:conditionQ}
+        %    \liminf_{n\to\infty}\inf_{Q_{n}\in\mathcal{Q}_{n,q}}\prob\set{\normsq{Q_{n}\e} > c\sigma^{2}q} > 0,
+        %\end{equation}
+        %where \(\mathcal{Q}_{n,q}\) is the set of all projection matrices of rank \(q\). 
+        If \(|\Tcal|\) is bounded,
+        %or \(\Acal\) is embedded,
+        then the condition that
+        \begin{equation}
+            \label{eq:conditionP}
+            p_{n}(\alpha^{*}_{n})\to\infty\quad\text{or}\quad \min_{\substack{\alpha\in\Tcal,\\ \alpha\neq\alpha^{*}}}\paren{p_{n}(\alpha) - p_{n}(\alpha^{*})}\to\infty
+        \end{equation}
+        is necessary and sufficient for the asymptotic loss efficiency of \(\hat{R}_{n,2}\).
+    \end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{GIC:\@ The case of \(\lambda_{n} \equiv 2\)}
+  \begin{example}
+    Suppose that \(\Acal = \Tcal = \set{\alpha_{1n}, \alpha_{2n}}\) with \(\alpha_{1n}\subset\alpha_{2n}\). Note that 
+      \[\normsq{\y - \X_{\alpha}\bbetahat_{\alpha}} = \normsq{\e} - \normsq{H_{\alpha}\e}.\]
+      Then, by the definition the GIC, \(\alphahat{}_{n} = \alpha_{1n}\) if and only if
+      \begin{equation}\label{eq:examplecrit}
+      \normsq{\paren{H_{\alpha_{2n}} - H_{\alpha_{1n}}}\e} < 2\sigmahat\paren{p_{2n}-p_{1n}},
+      \end{equation}
+      where \(p_{1n}\) and \(p_{2n}\) denote the dimensions of \(\alpha_{1n}\) and \(\alpha_{2n}\), respectively. If \(p_{1n}\to\infty\) and \(p_{2n} - p_{1n}\to\infty\), then
+      \[\frac{\normsq{\paren{H_{\alpha_{2n}} - H_{\alpha_{1n}}}\e}}{p_{2n} - p_{1n}}\xrightarrow{\prob}\sigma^{2},\]
+      so that (\ref{eq:examplecrit}) is satisfied with probability approaching 1 (by consistency of \(\sigmahat\)), and \(\Rhat{2}{\alpha}\) is consistent.
+  \end{example}
+\end{frame}
+
+\begin{frame}{GIC:\@ The case of \(\lambda_{n} \equiv 2\)}
+  \begin{example}
+    If \(p_{1n}\to\infty\) but \(p_{2n} - p_{1n}\leq c\) for some \(c>0\), then \(p_{2n} / p_{1n}\to 1\), which yields \(\Loss{\alpha_{2n}}/\Loss{\alpha_{1n}} \to 1\). On the other hand, if \(\alpha_{1n}\) and \(p_{2n} - p_{1n}\not\to\infty\), then
+    \[\frac{\Loss{\alphahat{}_{n}}}{\Loss{\alpha_{1n}}} = \ind{\alphahat{}_{n}=\alpha_{1n}} + \frac{\normsq{H_{\alpha_{2n}}\e}}{\normsq{H_{\alpha_{1n}}\e}}\ind{\alphahat{}_{n}=\alpha_{1n}}.\]
+    By optimality of \(L_{n}\), \({\normsq{H_{\alpha_{2n}}\e}}/{\normsq{H_{\alpha_{1n}}\e}}\geq1\) almost surely. Hence,
+    \[\frac{\Loss{\alphahat{}_{n}}}{\Loss{\alpha_{1n}}} = 1 + \paren{\frac{\normsq{H_{\alpha_{2n}}\e}}{\normsq{H_{\alpha_{1n}}\e}} - 1}\ind{\alphahat{}_{n}=\alpha_{1n}} = 1 + \frac{\normsq{\paren{H_{\alpha_{2n}} - H_{\alpha_{1n}}}\e}}{\normsq{H_{\alpha_{1n}}\e}} \stackrel{\mathrm{a.s.}}{>} 1.\]
+    Thus, \(\Rhat{2}{\alpha}\) is not asymptotically loss efficient.    
+  \end{example}
+\end{frame}
+
+\begin{frame}{GIC:\@ The case of \(\lambda_{n} \to \infty\)}
+  \begin{block}{Theorem (\cite{shao_1997})}\label{thm:97thm2}
+    Suppose that \textbf{H1}-\textbf{H4} hold and that
+    \begin{equation}\label{eq:310}
+        \limsup_{n\to\infty}\sum_{\alpha\in\Tcal}\frac{1}{p_{n}{(\alpha)}^{m}}<\infty
+    \end{equation}
+    for some \(m\geq1\) with \(\Ep{e_{i}^{4m}}<\infty\).
+    \begin{enumerate}
+        \item If \(\lambda_{n}\to\infty\) and \(\lambda_{n}p_{n}/n \to 0\) are satisfied, then \(\hat{R}_{n,\lambda_{n}}\) is asymptotically loss efficient.
+        \item Suppose that \(\lambda_{n}\to\infty\) and \(\lambda_{n}/n\to 0\). If there exists \(\alpha_{0}\in\Tcal\) with \(p_{n}(\alpha_{0})\) constant for all but finitely many \(n\), then \(\hat{R}_{n,\lambda_{n}}\) is consistent. 
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{GIC:\@ The case of \(\lambda_{n} \to \infty\)}
+  \textbf{Remark: }It can be shown that condition (\ref{eq:310}) is satisfied whenever \(|\Tcal|\) is bounded or \(\Acal\) is embedded. It also implies that 
+  \begin{equation}\label{eq:310consequence}
+      \max_{\alpha\in\Tcal} \frac{\normsq{H_{\alpha}\e}}{\lambda_{n}\sigmahat p_{n}(\alpha)}\xrightarrow{\prob} 0.
+  \end{equation}
+  From (\ref{eq:310consequence}), we have that 
+    \begin{equation}\label{eq:shao97probnonopt}
+        \frac{\normsq{H_{\alpha}\e}}{\lambda_{n}p_{n}(\alpha)} = \Op{\lambda_{n}^{-1}}.
+    \end{equation}
+
+  \begin{itemize}
+    \item Part 1 follows by an argument similar to the one in our previous example.
+    \item Part 2 follows immediately from (\ref{eq:shao97probnonopt}), \textbf{H1}, and the optimality of \(R_{n}\) (that is, that the smallest correct model is the model minimizing \(L_n\)).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cross-validation and the GIC}
+  \begin{block}{Theorem (\cite{shao_1997})}
+    
+    Suppose that \textbf{H1} to \textbf{H4} hold.
+    
+    \begin{enumerate}
+      \item The assertions in about the GIC with \(\lambda_{n}\equiv 2\) apply for the leave-one-out cross-validation estimator \(\hat{R}_{n}^{(1)}\).
+      \item If \(d_{n}\leq n\) is chosen so that \(d_{n}/n\to1\) as \(n\to\infty\), then the delete-\(d_{n}\) cross-validation estimator \(\hat{R}_{n}^{(d_{n})}\) has the same asymptotic behavior as the GIC with \(\lambda\to\infty\). Specifically, if \[\frac{p_{n}}{n-d_{n}}\to 0\] and the splits are well ``balanced,'' then \(\hat{R}_{n}^{(d_{n})}\) is consistent in selection whenever \(\Acal\) contains at least one correct model with fixed dimension.
+    \end{enumerate}
+  \end{block}
+    
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cross-validation and the GIC}
+  Letting \(n_{1}:=n-d_{n}\)  and \(n_{2}:=d_{n}\), the conditions in 2.\ of the latter Theorem can be written as 
+\[\frac{n_{2}}{n}\to 1\quad\text{and}\quad \frac{p_{n}}{n_{1}}\to 0.\]
+If \(p_{n}\) is fixed for large enough \(n\), we can equivalently write
+\begin{equation}\label{eq:lmsplitcond}
+    \alert{\frac{n_{2}}{n_{1}}\to\infty\quad\text{and}\quad n_{1}\to \infty.}
+\end{equation}
+This confirms our conjecture from before: a dominating validation size is necessary for cross-validation methods to be able to discriminate among correct models.
+
+\end{frame}
+
+
+\section{Selection of Nonparametric Procedures}
+\begin{frame}{Nonparametric Setup}
+  \begin{itemize}
+    \item Discuss the flexibility of nonparametric models.
+    \item Explain estimation challenges.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Hold-Out vs. Voting CV}
+  \begin{itemize}
+    \item Compare single-split (hold-out) versus multiple-split (voting) methods.
+    \item Mention stability and performance trade-offs.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Remarks}
+  \begin{itemize}
+    \item Practical considerations in implementation.
+    \item Sensitivity to data partitioning.
+  \end{itemize}
+\end{frame}
+
+\section{Aggregation}
+\begin{frame}{Aggregation Types}
+  \begin{itemize}
+    \item Linear, convex, model selection, exponential weighting.
+    \item Define each briefly.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Evaluating Aggregates}
+  \begin{itemize}
+    \item Criteria: Prediction error, stability.
+    \item Theoretical guarantees if available.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Penalized Least Squares}
+  \begin{itemize}
+    \item Introduce penalty-based aggregation.
+    \item Benefits over naive averaging.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Aggregation Remarks}
+  \begin{itemize}
+    \item Trade-offs and interpretability.
+    \item Empirical performance.
+  \end{itemize}
+\end{frame}
+
+\section{Simulation Study}
+\begin{frame}{Simulation Study}
+  \begin{itemize}
+    \item Describe simulation design briefly.
+    \item Summarize key findings in visual/table form.
+  \end{itemize}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Conclusion}
+  \begin{itemize}
+    \item Recap key results from all sections.
+    \item Discuss future directions or open problems.
+  \end{itemize}
+\end{frame}
+
+\end{document}
