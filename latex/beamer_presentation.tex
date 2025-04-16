@@ -47,7 +47,7 @@
 \newcommand{\alphabar}{\bar{\alpha}}
 \newcommand{\lev}{h_{ii,\alpha}}
 \newcommand{\loocv}[1]{\hat{R}^{(1)}_{n}\paren{#1}}
-\newcommand{\ho}{\hat{L}_{\mathrm{ho}}}
+\newcommand{\ho}{\hat{R}_{\mathrm{ho}}}
 \newcommand{\op}[1]{o_{\prob}\paren{#1}}
 \newcommand{\Op}[1]{O_{\prob}\paren{#1}}
 \newcommand{\sigmahat}{\hat{\sigma}^{2}_{n}}
@@ -143,7 +143,7 @@
 
 \end{frame}
 
-\section{Variable Selection for Linear Models}
+\section{Variable Selection for Linear Models}\label{sec:lm}
 \begin{frame}{Linear models: Setup}
   Suppose that the regression function \(f\) is \alert{linear}:
   \[\y = \X\bbeta + \e,\]
@@ -439,18 +439,130 @@ This confirms our conjecture from before: a dominating validation size is necess
 \end{frame}
 
 
-\section{Selection of Nonparametric Procedures}
-\begin{frame}{Nonparametric Setup}
+\section{Selection of Nonparametric Procedures}\label{sec:yang}
+\begin{frame}{The nonparametric setting}
   \begin{itemize}
-    \item Discuss the flexibility of nonparametric models.
-    \item Explain estimation challenges.
+    \item In many applications, the goal is accurate prediction, not a precise model of the data-generating process.
+
+    \item The idea of a single “true” or “correct” model is less relevant.
+    
+    \item For many estimators, we can prove risk bounds of the form
+    \[\sup_{f\in\Fcal}\E{\normsq{f - \hat{f}_{n}}} \leq C\psi_{n}^{2}\]
+    for certain constants \(C\), positive sequences \(\psi_{n}\to 0\), and classes of functions \(\Fcal\).
+
+    \item Inclusion/exclusion of relevant covariates remains important.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Hold-Out vs. Voting CV}
+\begin{frame}{The nonparametric setting}
+  We will consider the simplified scenario of selecting between two regression procedures, denoted \alert{\(\delta_{1}\)} and \alert{\(\delta_{2}\)}, that yield estimators \alert{\(\hat{f}_{n, 1}\)} and \alert{\(\hat{f}_{n, 2}\)} of the regression function \(f\).
+
+  \textbf{Definition:}
+  Let \(L_{n}\) be a loss function. We say \(\delta_{1}\) is \alert{\emph{asymptotically better}} than \(\delta_{2}\) under \(L_{n}\) if, for \(0<\varepsilon<1\), there exists \(c_{\varepsilon}>0\) such that
+  \[\prob\set{\Loss{\fhat{n}{2}}\geq (1+c_{\epsilon})\Loss{\fhat{n}{2}} }\geq 1-\varepsilon\]
+  for all but finitely many \(n\).
+
+  Given that \(\delta_{1}\) is asymptotically better than \(\delta_{2}\), we say that a selection procedure is \alert{consistent} if it selects \(\delta_{1}\) with probability tending to 1 as \(n\to\infty\).
+\end{frame}
+
+\begin{frame}{Nonparametric selection: The hold-out}
+  We assume that the estimators \(\fhat{n}{1}\) and \(\fhat{n}{2}\) converge exactly at rates \(\set{p_{n}}_{n\geq 1}\) and \(\set{q_{n}}_{n\geq 1}\) under the \(L_{2}[0,1]\) loss, respectively. In other words, we assume that
+  \[\norm{f - \fhat{n}{1}}_{2} = \Op{p_{n}} \quad\text{and}\quad \prob\set{\norm{f-\fhat{n}{1}} \geq c_{\varepsilon}p_{n}} \geq 1-\varepsilon\]
+  for all \(\varepsilon\in(0,1)\) and for some \(c_{\varepsilon}>0\), and similarly for \(\fhat{n}{2}\) and \(q_{n}\).
+
+  The \alert{hold-out} loss estimator is defined by
+  \begin{equation}\label{def:holoss}
+      \ho(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{i} - \fhat{n_{1}}{j}(\x_{i})}^{2}\quad\text{for }j=1,2.
+  \end{equation}
+  The selection procedure consists in selecting the learning method \(\delta_{j}\) whose estimator \(\fhat{n}{j}\) minimizes \(\ho\) for \(j\in\set{1,2}\). We write \(\fho\) to denote the estimator selected by \(\ho\).
+\end{frame}
+
+\begin{frame}{Nonparametric selection: The hold-out}
+  To show the consistency of \(\ho\), we establish two assumptions:  
   \begin{itemize}
-    \item Compare single-split (hold-out) versus multiple-split (voting) methods.
-    \item Mention stability and performance trade-offs.
+    \item We assume the existance of two positive sequences \(\set{A_{n}}_{n\geq1}\) and \(\set{M_{n}}_{n\geq1}\) such that 
+    \begin{equation}\label{eq:lpconditions}
+      \norm{f-\fhat{n}{j}}_{\infty} = \Op{A_{n}}\quad\text{and}\quad\frac{\norm{f-\fhat{n}{j}}_{4}}{\norm{f-\fhat{n}{j}}_{2}} = \op{M_{n}}
+    \end{equation}
+    \item We will assume that one of \(\delta_{1}\) and \(\delta_{2}\) is asymptotically better than the other.
+    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Nonparametric selection: The hold-out}
+\begin{block}{Theorem (\cite{yang_2007})}
+    Suppose that the conditions established above hold. Suppose, furthermore, that
+    \begin{enumerate}
+        \item \(n_{1}\to\infty\) as \(n\to\infty\)
+        \item \(n_{2}\to\infty\) as \(n\to\infty\)
+        \item \(n_{2}M_{n_{1}}^{-4} \to \infty\) as \(n\to\infty\)
+        \item \(\sqrt{n_{2}}\max(p_{n_{1}}, q_{n_{1}})/\paren{1+A_{n_{1}}}\to\infty \) as \(n\to\infty\)
+    \end{enumerate}
+    Then, the hold-out CV procedure is consistent.
+\end{block}
+\end{frame}
+
+\begin{frame}{Nonparametric selection: The hold-out}
+  \begin{example}
+    Suppose that \(\fhat{n}{1}\) and \(\fhat{n}{2}\) are two nonparametric estimators with rates of convergence \(p_{n}=O\paren{n^{-4/9}}\) and \(q_{n}=O\paren{n^{-1/3}}\), respectively. Suppose that (\ref{eq:lpconditions}) is satisfied with \(A_{n} = O(1)\) and \(M_{n}=O(1)\). If we choose splits such that \(n_{1}\to\infty\) and \(n_{2}\to\infty\) as \(n\to\infty\), then \(n_{2}M_{n_{1}}^{-4}\) is clearly satisfied and 
+    \[\frac{\sqrt{n_{2}}\max(p_{n_{1}}, q_{n_{1}})}{1+A_{n_{1}}} \geq \frac{n_{2}^{1/2}}{n_{1}^{1/3}}\to\infty \]
+    is satisfied if \(n_{1}=o\paren{n_{2}^{3/2}}\). In other words, it is possible for the estimation size \(n_{1}\) to be dominating.
+  \end{example}
+\end{frame}
+
+\begin{frame}{Nonparametric selection: The hold-out}
+  \begin{example}
+    On the other hand, if at least one of \(\fhat{n}{1}\) and \(\fhat{n}{2}\) has a parametric rate of convergence \(O(n^{-1/2})\), then
+    \[\sqrt{n_{2}}\max(p_{n_{1}},q_{n_{1}})\geq \paren{\frac{n_{2}}{n_{1}}}^{1/2}\to\infty\]
+    is satisfied whenever \(n_{2}/n_{1}\to\infty\). This agrees with the conclusion from Section~\ref{sec:lm}, in which we showed that cross-validation is often consistent if the validation size dominates.
+  \end{example}
+\end{frame}
+
+\begin{frame}{Nonparametric selection: Voting CV}
+   We introduce the \alert{majority-vote cross-validation}: For each permutation \(i\mapsto\pi(i)\) of the data, we compute the estimators \(\fhat{n_{1}}{1}\) and \(\fhat{n_{1}}{2}\) using the first \(n_{1}\) data points,
+  \[\data^{E_{1}} = \set{\paren{y_{\pi(1)}, \x_{\pi(1)}}, \ldots,\paren{y_{\pi(n_1)}, \x_{\pi(n_1)}}},\]
+  as the training sample and the remaining \(n_{2}=n-n_{1}\) elements as the validation sample. We then find the estimator that minimizes the hold-out loss
+  \[\hat{R}_{\pi}(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{\pi(i)} - \fhat{n_{1}}{j}\paren{\x_{\pi(i)}}}^{2}\qquad \text{for }j=1,2.\]
+\end{frame}
+
+\begin{frame}{Nonparametric selection: Voting CV}
+  The chosen estimator is the one favored by the majority of the permutations.
+  Let 
+  \[\tau_{\pi} = \ind{\hat{L}_{\pi}(\fhat{n}{1}) \leq \hat{L}_{\pi}(\fhat{n}{2})}\]
+  The majority-vote estimator selection rule is as follows:
+  \[\hat{f}_{n} = \begin{cases}
+      \fhat{n}{1} &\text{if }\sum_{\pi\in\Pi}\tau_{\pi} \geq {n!}/{2},\\[2mm]
+      \fhat{n}{2} &\text{otherwise,}
+  \end{cases}\]
+  where \(\Pi\) denotes the set of all permutations of \([n]\).
+\end{frame}
+
+\begin{frame}{Nonparametric selection: Voting CV}
+  \begin{block}{Theorem (\cite{yang_2007})}
+    Under the conditions of the previous Theorem and the condition that the data is iid, the majority-vote cross-validation method is consistent.
+  \end{block}
+
+  \textit{Proof: }
+  Suppose that \(\delta_{1}\) is asymptotically better than \(\delta_{2}\). For \(\pi\in \Pi\), we have that
+  \[\prob\set{\hat{L}_{\pi}\paren{\fhat{n}{1}} \leq \hat{L}_{\pi}\paren{\fhat{n_{1}}{2}}} = \Ep{\tau_{\pi}} \stackrel{(*)}{=} \Ep{\frac{1}{n!}\sum_{\pi\in\Pi}\tau_{\pi}}.\]
+  The equality at \((*)\) follows from the fact that the data are iid, hence exchangeable, and thus the \(\tau_\pi\) are identically distributed. By the previous theorem, the right-hand side converges to 1 as \(n\to\infty\). Since the average \(1/n! \sum_{\pi}\tau_{\pi}\) is almost surely at most 1, it follows that \(1/n! \sum_{\pi}\tau_{\pi} \to 1\) in probability, and the majority-vote cross-validation method is consistent.\qed{}
+\end{frame}
+
+\begin{frame}{Nonparametric selection: Voting CV}
+  \textbf{Remark 1: } The proof does not require using the entire set \(\Pi\) of permutations for the majority vote. 
+  
+  \textbf{Remark 2: }These conditions are not merely sufficient but necessary
+  
+  \(\implies \) The number of splits does not affect consistency. In other words, multiple splits in cross-validation cannot rescue an inconsistent single-split procedure.
+\end{frame}
+
+\begin{frame}{Nonparametric selection: Key points}
+  \begin{itemize}
+    \item Key distinction: In nonparametric settings, training set dominance is acceptable for consistency, unlike the parametric case.
+    \item Cross-validation is effective for comparing estimators with different convergence rates.
+    \item Both single-split and voting methods can yield consistent selection under suitable norm conditions.
+    \item Leave-one-out CV is generally inadequate due to its small validation size.
+    \item Averaging approaches may retain more data and are likely asymptotically equivalent to voting methods (\cite{yang_2007}).
   \end{itemize}
 \end{frame}
 

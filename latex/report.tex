@@ -593,8 +593,8 @@ In what follows, we will study the asymptotic performance of two variations on t
 \subsection{Single-split cross-validation (the \emph{hold-out})}
 
 For this section, we analyze a single-split approach where the first \(n_1\) elements in \(\data\) are used as a training/estimation sample and the remaining \(n_2\) elements make up the validation sample. We assume that the estimators \(\fhat{n}{1}\) and \(\fhat{n}{2}\) converge exactly at rates \(\set{p_{n}}_{n\geq 1}\) and \(\set{q_{n}}_{n\geq 1}\) under the \(L_{2}[0,1]\) loss, respectively. In other words, we assume that
-\[\norm{f, \fhat{n}{1}}_{2} = \Op{p_{n}} \quad\text{and}\quad \prob\set{\norm{f-\fhat{n}{1}} \geq c_{\varepsilon}p_{n}} \geq 1-\varepsilon\]
-for all \(\varepsilon\in(0,1)\) and for some \(c_{\varepsilon}>0\), and similarly for \(\fhat{n}{2}\) and \(q_[n]\).
+\[\norm{f - \fhat{n}{1}}_{2} = \Op{p_{n}} \quad\text{and}\quad \prob\set{\norm{f-\fhat{n}{1}} \geq c_{\varepsilon}p_{n}} \geq 1-\varepsilon\]
+for all \(\varepsilon\in(0,1)\) and for some \(c_{\varepsilon}>0\), and similarly for \(\fhat{n}{2}\) and \(q_{n}\).
 
 The hold-out loss estimator is defined by
 \begin{equation}\label{def:holoss}
@@ -636,7 +636,7 @@ A very detailed proof of this result is given in~\textcite{yang_2007}, so it wil
 \subsection{Voting cross-validation with multiple splits}
 
 The majority-vote cross-validation method proceeds as follows:\footnote{The procedure desctibed here is theoretical in nature. In practice, we would not compute the hold-outs for all permutations of the data.} for each permutation \(i\mapsto\pi(i)\) of the data, we compute the estimators \(\fhat{n_{1}}{1}\) and \(\fhat{n_{1}}{2}\) using the first \(n_{1}\) data points,
-\[E_{1} = \set{\paren{y_{\pi(1)}, \x_{\pi(1)}}, \ldots,\paren{y_{\pi(n_1)}, \x_{\pi(n_1)}}},\]
+\[\data^{E_{1}} = \set{\paren{y_{\pi(1)}, \x_{\pi(1)}}, \ldots,\paren{y_{\pi(n_1)}, \x_{\pi(n_1)}}},\]
 as the training sample and the remaining \(n_{2}=n-n_{1}\) elements as the validation sample. We then find the estimator that minimizes the hold-out loss
 \[\hat{L}_{\pi}(\fhat{n}{j}) = \sum_{i=n_{1}+1}^{n}\paren{y_{\pi(i)} - \fhat{n_{1}}{j}\paren{\x_{\pi(i)}}}^{2}\qquad \text{for }j=1,2.\]
 The chosen estimator is the one favored by the majority of the permutations. More formally, we define 
