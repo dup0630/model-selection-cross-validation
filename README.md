@@ -15,9 +15,6 @@
 ## Literature
 - Shao, 1993
 - Shao, 1997
-    - Two Categories: LOO (similar to GIC-2) and delete-d (similar to GIC-$$\lambda_{n}$$)
-    - Thm 1: Assymptotic efficiency of category 1
-    - Thm 2: Assimptotic efficiency of category 2
 - Yang, 2007
 - Bunea, Tsybakov 2007
 - Tsybakov, 2009
