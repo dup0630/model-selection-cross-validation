@@ -115,7 +115,9 @@ Cross-validation methods provide a data-driven framework for navigating these tr
 
 Thus, as is generally the case in statistics, the need for model selection stems from an uncertainty or lack of knowledge about whatever system is being studied, and while selection procedures may give us improved confidence on our estimation endeavours, it certainly is not a perfect cure for our ignorance. Rather than committing to a single estimator, another way of coping with our lack of knowledge is to combine or \emph{aggregate} our candidate models. This way, we may obtain a more robust and potentially better-performing estimator.
 
-In this paper, we study two frameworks for model selection in the regression setting, with a focus on the asymptotic properties of cross-validation methods. We then investigate aggregation as an alternative approach, examining the asymptotic guarantees that it can provide us with. Finally, we perform a simulation study where we compare the performance of multiple of the procedures treated. The goal of this project is to offer insight into how different model selection and aggregation strategies perform in finite-sample scenarios. By contrasting their empirical behavior with their asymptotic properties, we aim to provide a nuanced understanding of when and why certain methods may be preferable, thereby guiding more informed decisions in real-world predictive modeling tasks.
+In this paper, we study two frameworks for model selection in the regression setting, with a focus on the asymptotic properties of cross-validation methods. We then investigate aggregation as an alternative approach, examining the asymptotic guarantees that it can provide us with. 
+%Finally, we perform a simulation study where we compare the performance of multiple of the procedures treated. 
+The goal of this project is to offer insight into how different model selection and aggregation strategies perform in asymptotic scenarios. We aim to provide a nuanced understanding of when and why certain methods may be preferable, thereby guiding more informed decisions in real-world predictive modeling tasks.
 
 \subsection{Setup and notation}\label{sec:setup}
 
@@ -360,7 +362,7 @@ Our goal in this section is to show some asymptotic properties of the leave-one-
     Noting that \(R_{n}(\alpha) = \frac{1}{n}\normsq{M_{\alpha}\X\bbeta} + o_{\prob}(1)\) yields the first case in (\ref{eq:lemmadecomp}).
 
     If \(\alpha\in\Tcal\), it is easy to see from (\ref{line:decomp}) that \(\xi_{\alpha,n} = 1/n\normsq{M_{\alpha}\e}\), Furthermore,
-    \[\zeta_{\alpha,n} = \frac{2}{n}\sigma^{2}p(\alpha) + \op{1},\qquad\textcolor{red}{(?)}\]
+    \[\zeta_{\alpha,n} = \frac{2}{n}\sigma^{2}p(\alpha) + \op{1}\]
     proving the second case.\qed{}
 \end{myproofbox}
 
@@ -564,7 +566,8 @@ If \(p_{n}\) is fixed for large enough \(n\), we can equivalently write
 \end{equation}
 This confirms our conjecture from section~{\ref{sec:loo}}, where we argued that a larger validation size was necessary for cross-validation methods to be able to discriminate among correct models. Indeed, (\ref{eq:lmsplitcond}) shows that the validation size must be the dominating.
 
-This is a major result in our investigation that can guide our intuition and inform choice of estimators. From a practical viewpoint, however, it might seem discouraging. One of the great appeals of the leave-one-out is its accessibility and exceptionally low computational cost. The delete-\(d\) approach, on the other hand, is less compelling: there is no general shortcut as there is for the leave-one-out, and, with a dominating validation size, the number of necessary model fittings can grow with \(n\) at an absurdly large rate. Fortunately, a result in the following section suggests that, as far as consistency goes, this might not always be the case. Moreover, in Section~\ref{sec:simulations}, we will explore the performance of more common and more feasible cross-validation methods, such as the \(k\)-fold.
+This is a major result in our investigation that can guide our intuition and inform choice of estimators. From a practical viewpoint, however, it might seem discouraging. One of the great appeals of the leave-one-out is its accessibility and exceptionally low computational cost. The delete-\(d\) approach, on the other hand, is less compelling: there is no general shortcut as there is for the leave-one-out, and, with a dominating validation size, the number of necessary model fittings can grow with \(n\) at an absurdly large rate. Fortunately, a result in the following section suggests that, as far as consistency goes, this might not always be the case. 
+%Moreover, in Section~\ref{sec:simulations}, we will explore the performance of more common and more feasible cross-validation methods, such as the \(k\)-fold.
 
 
 
@@ -671,7 +674,8 @@ Cross-validation proves particularly useful for selection when comparing estimat
 
 While this section focused the voting approach, it is worth noting that the more common averaging approach (described, for example, in~\ref{sec:cv}) should, in theory, retain more information from the data. From a consistency perspective, \textcite{yang_2007} hypothesizes that both approaches are likely to be equivalent: if a majority of the permutations favour \(\fhat{n}{1}\), say, with high probability, then it is also likely that the average \((1/n!)\sum_{\pi\in\Pi}\hat{L}_{\pi}(\fhat{n}{1})\) will be smaller than that of \(\fhat{n}{2}\).
 
-Several practical considerations emerge from this analysis, including the optimal choice of splitting ratios and the relative merits of k-fold procedures versus single splits. While our theoretical framework provides guidance on asymptotic properties, the finite-sample performance of these methods under various conditions remains an important question. These practical aspects, along with empirical comparisons between different cross-validation variants, will be addressed through simulation studies in a subsequent chapter.~\ref{sec:simulations}
+Several practical considerations emerge from this analysis, including the optimal choice of splitting ratios and the relative merits of k-fold procedures versus single splits. While our theoretical framework provides guidance on asymptotic properties, the finite-sample performance of these methods under various conditions remains an important question. 
+%These practical aspects, along with empirical comparisons between different cross-validation variants, will be addressed through simulation studies in a subsequent chapter.~\ref{sec:simulations}
 
 
 \section{Aggregation}
@@ -909,10 +913,8 @@ The BIC-type aggregation approach discussed in this section provides a general f
     \item Extension to heteroscedastic settings: The framework presented assumes homoscedastic, Gaussian errors. Extending the results to settings with heteroscedastic errors would be valuable for many practical applications where the assumption of constant variance is unrealistic.
 \end{enumerate}
 
-The aggregation approach presented in this section provides a theoretically sound framework for combining multiple candidate models, with guarantees that approach the optimal minimax rates. The flexibility of the framework makes it applicable across various model selection and aggregation scenarios, though practical implementation considerations remain to be addressed, particularly for large sets of candidate models. We will empirically evaluate the performance of this approach in the next section.
+The aggregation approach presented in this section provides a theoretically sound framework for combining multiple candidate models, with guarantees that approach the optimal minimax rates. The flexibility of the framework makes it applicable across various model selection and aggregation scenarios, though practical implementation considerations remain to be addressed, particularly for large sets of candidate models. 
 
-
-\section{Simulation study}\label{sec:simulations}
 
 
 \newpage
