@@ -913,9 +913,18 @@ The BIC-type aggregation approach discussed in this section provides a general f
     \item Extension to heteroscedastic settings: The framework presented assumes homoscedastic, Gaussian errors. Extending the results to settings with heteroscedastic errors would be valuable for many practical applications where the assumption of constant variance is unrealistic.
 \end{enumerate}
 
-The aggregation approach presented in this section provides a theoretically sound framework for combining multiple candidate models, with guarantees that approach the optimal minimax rates. The flexibility of the framework makes it applicable across various model selection and aggregation scenarios, though practical implementation considerations remain to be addressed, particularly for large sets of candidate models. 
 
+\section{Conclusion}
 
+We have highlighted key theoretical insights into the use of cross-validation for model selection in both parametric and nonparametric settings. In the context of linear models, consistent model selection requires that the size of the validation set asymptotically dominates that of the training set. That is,
+
+Under these conditions, leave-one-out cross-validation performs well only when there is at most one correct model of fixed dimension. In scenarios where such a model exists, the delete-\(d\) method also shows strong performance.
+
+In contrast, the nonparametric setting presents a different picture. Here, consistency can be achieved even when the training set is larger than the validation set, provided that certain norm conditions are satisfied. Both single-split and majority-vote cross-validation procedures can yield consistent selection under these conditions. Nevertheless, leave-one-out cross-validation remains inadequate in this setting due to the validation set being too small. Additionally, employing multiple data splits does not remedy the inconsistency of a flawed single-split procedure.
+
+From a practical perspective, although cross-validation can be computationally intensive, its use may be justified by its strong theoretical guarantees. Notably, the results on majority-vote methods indicate that even a small number of splits, as in \(k\)-fold cross-validation, can suffice for consistent model selection. However, several practical aspects remain unresolved and warrant further investigation, including the optimal choice of data split ratios, the number of folds or splits, and the comparative performance of voting versus averaging strategies.
+
+Finally, the aggregation approach presented provides an alternative theoretically sound framework for dealing with multiple candidate models, with guarantees that approach optimal minimax rates. The flexibility of the framework makes it applicable across various model selection and aggregation scenarios, though practical implementation considerations remain to be addressed, particularly for large sets of candidate models.
 
 \newpage
 \printbibliography{}
