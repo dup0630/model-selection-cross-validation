@@ -156,9 +156,39 @@
         \item We say \(\alpha\in\Acal\) is \emph{correct} if \(\X\bbeta\aseq f_{\alpha}(\X)\), and we denote by \(\Tcal\) the set of correct models in \(\Acal\).
         \item We say \(\alpha\in\Acal\) is \emph{wrong} if it is not correct, and we denote by \(\Tcal^{c}\) the set of wrong models in \(\Acal\).
         \item We say \(\Acal\) is \emph{embedded} if there exists an enumeration \(\alpha_{1}, \alpha_{2}, \ldots, \alpha_{k}\) of all elements in \(\Acal\) such that \[\alpha_{1}\subset\alpha_{2}\subset\cdots\subset\alpha_{k}.\]
-\end{enumerate}
+    \end{enumerate}
 
+\end{frame}
 
+\begin{frame}{Linear models: Setup}
+    \begin{example}
+        Suppose that we have the underlying model \(\Ep{y\mid\x} \aseq \X\bbeta\) given by
+        \[\X = \begin{bmatrix}
+          | & | & | & |\\
+          \x^{(1)} & \x^{(2)} & \x^{(3)} & \x^{(4)} \\
+          | & | & | & |
+        \end{bmatrix}\quad\text{and}\quad \bbeta = \begin{bmatrix}
+          2\\
+          5\\
+          3\\
+          0
+        \end{bmatrix}\]
+        We consider \(\Acal = \set{\alpha_{1}, \alpha_{2}, \alpha_{3}}\) with
+        \begin{align*}
+            \alpha_{1} = \set{1,2},\quad\alpha_{2}=\set{1,2,3},\quad\text{and}\quad\alpha_{3} = \set{1,2,3,4}
+        \end{align*}
+        The model \(\alpha_{2}\) is correct:
+        \[\X_{\alpha_{2}}\bbeta_{\alpha_{2}} = \begin{bmatrix}
+          | & | & | \\
+          \x^{(1)} & \x^{(2)} & \x^{(3)} \\
+          | & | & | 
+        \end{bmatrix}\begin{bmatrix}
+          2\\
+          5\\
+          3
+        \end{bmatrix} = \X\bbeta\]
+      
+    \end{example}
 
 \end{frame}
 
@@ -303,6 +333,21 @@ This confirms our conjecture from before: a dominating validation size is necess
 
     \item Inclusion/exclusion of relevant covariates remains important.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{The nonparametric setting}
+  \begin{center}
+      \includegraphics[width=0.95\textwidth]{comparison1.png}
+      \newline
+      \small True model
+  \end{center}
+\end{frame}
+\begin{frame}{The nonparametric setting}
+  \begin{center}
+      \includegraphics[width=0.95\textwidth]{comparison2.png}
+      \newline
+      \small Estimators
+  \end{center}
 \end{frame}
 
 \begin{frame}{The nonparametric setting}
