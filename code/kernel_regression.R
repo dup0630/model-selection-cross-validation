@@ -1,7 +1,7 @@
 # Univariate case --------------------------------------------------------------
 n <- 100
-sigma.sq <- 0.01
-f <- function(X){return(sin(4*X) + (2*cos(20*X)))}
+sigma.sq <- 0.5
+f <- function(X){return(sin(4*X) + (2*cos(20*X))*X)}
 #f <- function(X){return(ifelse(X<0.3, 1, ifelse(X>0.6, 0.5, 0)))}
 X <- runif(n, 0, 1)
 e <- rnorm(n, 0, sigma.sq)
@@ -20,10 +20,24 @@ y_plot <- rep(0, length(x_plot))
 for (i in 1:length(x_plot)) {
   y_plot[i] <-  reg(x_plot[i], h)
 }
-plot(y~X)
-points(f(x_plot)~x_plot, type="l", ylab="y", col="red")
+plot(y~X, main="Comparison of Regression Procedures")
+points(f(x_plot)~x_plot, type="l", ylab="y", col="limegreen")
 points(y_plot~x_plot, type="l", col="blue")
 
+library(randomForest)
+rf = randomForest(x=data.frame(X), y=y, ntree=500)
+y_plot_rf <- predict(rf, newdata = data.frame('X'=x_plot))
+points(x_plot, y_plot_rf, type='l', col='red')
+
+lmod <- lm(y~X)
+y_plot_lm <- predict(lmod, newdata = data.frame('X'= x_plot))
+abline(a=lmod$coefficients[1], b=lmod$coefficients[2], col="gold3")
+
+legend(x=0.7, y=3, 
+       legend = c("Nadaraya-Watson", "Random Forest", "Linear Model"), 
+       col = c("blue", "red", "gold3"),
+       lty=1,
+       pch=19)
 
 # Multivariate case ------------------------------------------------------------
 density <- function(x_0, X, kernel, h){
