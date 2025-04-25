@@ -17,4 +17,6 @@ This repository contains the LaTeX report and simulation code for a project expl
 
 This work is shared under the MIT License.
 
+---
+
 ![image](comparison2.png)
