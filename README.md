@@ -1,4 +1,4 @@
-# The Asymptotics of Cross-Validation and Aggregation in Regression
+# Project: The Asymptotics of Cross-Validation and Aggregation in Regression
 
 This repository contains the LaTeX report and simulation code for a project exploring model selection and aggregation in regression, with a focus on the asymptotic properties of cross-validation methods. The report investigates both parametric (linear) and nonparametric settings, and discusses aggregation as an alternative to model selection. It draws heavily on foundational results from the sources listed in `latex/citations.bib`, and includes original derivations, discussion, and simulation design. This project was completed as part of coursework for McGill's MATH 410.
 
