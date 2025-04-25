@@ -16,6 +16,7 @@ This repository contains the LaTeX report and simulation code for a project expl
 ## License
 
 This work is shared under the MIT License.
+Copyright (c) 2025 Diego Urdapilleta de la Parra
 
 ---
 
